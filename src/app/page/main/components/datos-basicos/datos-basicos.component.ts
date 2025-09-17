@@ -5,10 +5,11 @@ import {SkeletonComponent} from '@shared/components/skeleon/skeleton.component';
 import {MainSharedService} from '@shared/services/main-shared.service';
 import {PerfilesSharedService} from '@shared/services/perfiles-shared.service';
 import {centrosEmpre} from '../../interface/principal';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
     selector: 'app-datos-basicos',
-    imports: [SkeletonComponent, MatIconModule, MatButtonModule],
+    imports: [SkeletonComponent, MatIconModule, MatButtonModule, ButtonModule],
     templateUrl: './datos-basicos.component.html',
     styleUrl: './datos-basicos.component.scss'
 })
