@@ -1,0 +1,183 @@
+// Button variants
+@use 'sass:map';
+@use 'sass:meta';
+@use 'sass:math';
+@use 'sass:color';
+@use '@angular/material' as mat;
+
+$_ripple-opacity: 0.1;
+
+// Applies a focus style to an mat-button element for each of the supported palettes.
+@mixin _focus-overlay-color($config-or-theme, $variants) {
+	$config: mat.m2-get-color-config($config-or-theme);
+
+	@each $variant, $variant-palette in $variants {
+		&.mat-#{$variant} .mat-button-focus-overlay {
+			background-color: mat.m2-get-color-from-palette($variant-palette);
+		}
+	}
+}
+
+@mixin _ripple-background($palette, $hue, $opacity) {
+	$background-color: mat.m2-get-color-from-palette($palette, $hue, $opacity);
+	background-color: $background-color;
+	@if (meta.type-of($background-color) != color) {
+		opacity: $opacity;
+	}
+}
+
+@mixin _ripple-color($theme, $hue, $opacity, $variants) {
+	@each $variant, $variant-palette in $variants {
+		&.mat-#{$variant} .mat-ripple-element {
+			@include _ripple-background($variant-palette, $hue, $opacity);
+			border-radius: var(--mdc-shape-medium) !important;
+			-webkit-border-radius: var(--mdc-shape-medium) !important;
+			-moz-border-radius: var(--mdc-shape-medium) !important;
+			-ms-border-radius: var(--mdc-shape-medium) !important;
+		}
+	}
+}
+// contraste
+@function luminance($color) {
+	$colors: (
+		'red': color.channel($color, 'red', $space: rgb),
+		'green': color.channel($color, 'green', $space: rgb),
+		'blue': color.channel($color, 'blue', $space: rgb),
+	);
+
+	@each $name, $value in $colors {
+		$adjusted: 0;
+		$value: calc($value / 255);
+
+		@if $value < 0.03928 {
+			$value: $value / 12.92;
+		} @else {
+			$value: calc(($value + 0.055) / 1.055);
+			$value: pow($value, 2.4);
+		}
+
+		$colors: map.merge(
+			$colors,
+			(
+				$name: $value,
+			)
+		);
+	}
+
+	@return (map.get($colors, 'red') * 0.2126) + (map.get($colors, 'green') * 0.7152) + (map.get($colors, 'blue') * 0.0722);
+}
+@function contrast($color1, $color2) {
+	@if luminance($color1) > luminance($color2) {
+		@return (luminance($color1) + 0.05) / (luminance($color2) + 0.05);
+	} @else {
+		@return (luminance($color2) + 0.05) / (luminance($color1) + 0.05);
+	}
+}
+// Applies a property to an mat-button element for each of the supported palettes.
+@mixin _theme-property($theme, $property, $hue, $variants) {
+	$background: map.get($theme, background);
+	$foreground: map.get($theme, foreground);
+
+	@each $variant, $variant-palette in $variants {
+		&.mat-#{$variant} {
+			$color: mat.m2-get-color-from-palette($variant-palette, $hue);
+			$colorbg: mat.m2-get-color-from-palette($variant-palette, default-contrast);
+			$luminance: luminance($color);
+
+			#{$property}: #{$color};
+			@if $property == 'color' {
+				@if $hue == text {
+					@if $luminance >= 0.5 {
+						#{$property}: #{$colorbg};
+
+						--mdc-filled-button-label-text-color: #{$colorbg};
+						--mdc-outlined-button-label-text-color: #{$colorbg};
+						--mat-filled-button-state-layer-color: #{$colorbg};
+					} @else {
+						--mdc-filled-button-label-text-color: #{$color};
+						--mdc-outlined-button-label-text-color: #{$color};
+						--mat-filled-button-state-layer-color: #{$color};
+					}
+				} @else {
+					--mdc-filled-button-label-text-color: #{$color};
+					--mdc-outlined-button-label-text-color: #{$color};
+					--mat-filled-button-state-layer-color: #{$color};
+				}
+			} @else {
+				--mdc-filled-button-container-color: #{$color};
+			}
+			--mat-filled-button-ripple-color: rgba(255, 255, 255, 0.1);
+		}
+
+		&.mat-#{$variant} {
+			&.mat-button[disabled] {
+				$palette: if($property == 'color', $foreground, $background);
+				#{$property}: mat.m2-get-color-from-palette($palette, disabled-button);
+			}
+		}
+	}
+}
+
+@mixin color($config-or-theme, $variants) {
+	$config: mat.m2-get-color-config($config-or-theme);
+	$foreground: map.get($config, foreground);
+	$background: map.get($config, background);
+
+	.mdc-button.mat-mdc-button,
+	.mdc-icon-button.mat-mdc-icon-button,
+	.mdc-button--outlined {
+		@include _theme-property($config, 'color', text, $variants);
+		@include _focus-overlay-color($config, $variants);
+		& {
+			border-radius: var(--mdc-shape-medium) !important;
+			-webkit-border-radius: var(--mdc-shape-medium) !important;
+			-moz-border-radius: var(--mdc-shape-medium) !important;
+			-ms-border-radius: var(--mdc-shape-medium) !important;
+		}
+	}
+
+	.mdc-button--unelevated,
+	.mdc-button.mdc-button--raised.mat-mdc-raised-button:not([disabled]),
+	.mdc-fab.mat-mdc-fab:not([disabled]),
+	.mdc-fab.mdc-fab--mini.mat-mdc-mini-fab:not([disabled]) {
+		@include _theme-property($config, 'color', default-contrast, $variants);
+		@include _theme-property($config, 'background-color', default, $variants);
+		@include _ripple-color($config, default-contrast, $_ripple-opacity, $variants);
+		& {
+			border-radius: var(--mdc-shape-medium) !important;
+			-webkit-border-radius: var(--mdc-shape-medium) !important;
+			-moz-border-radius: var(--mdc-shape-medium) !important;
+		}
+	}
+}
+.mat-mdc-icon-button.mat-mdc-button-persistent-ripple,
+.mat-mdc-button-persistent-ripple.mdc-fab__ripple,
+.mat-mdc-button-persistent-ripple.mdc-icon-button__ripple {
+	border-radius: var(--mdc-shape-medium) !important;
+	-webkit-border-radius: var(--mdc-shape-medium) !important;
+	-moz-border-radius: var(--mdc-shape-medium) !important;
+	-ms-border-radius: var(--mdc-shape-medium) !important;
+}
+.mdc-button.mdc-button--raised.mat-mdc-raised-button[disabled],
+.mdc-fab.mat-mdc-fab[disabled] {
+	cursor: default;
+	pointer-events: none;
+	box-shadow:
+		0px 0px 0px 0px rgba(0, 0, 0, 0.2),
+		0px 0px 0px 0px rgba(0, 0, 0, 0.14),
+		0px 0px 0px 0px rgba(0, 0, 0, 0.12);
+	color: var(--mat-fab-disabled-state-foreground-color);
+	background-color: var(--mat-fab-disabled-state-container-color);
+}
+
+.mat-mdc-icon-button[disabled] {
+	color: var(--mdc-icon-button-disabled-icon-color) !important;
+}
+.mat-mdc-fab[disabled],
+.mat-mdc-mini-fab[disabled] {
+	color: var(--mat-fab-disabled-state-foreground-color) !important;
+	background-color: var(--mat-fab-disabled-state-container-color) !important;
+}
+.mat-mdc-button[disabled] {
+	color: var(--mdc-text-button-disabled-label-text-color) !important;
+}

@@ -1,0 +1,61 @@
+<!-- Config 1 (Mensaje de Alerta)-->
+<div class="w-[94vw] max-w-[500px] lg:max-w-[600px] flex flex-col max-h-full">
+	<div class="flex flex-row justify-between items-center" mat-dialog-title>
+		<span class="text-base">Noticias Ucv</span>
+		<button mat-icon-button mat-dialog-close color="secundary" class="scale-90">
+			<mat-icon class="material-icons-round">close</mat-icon>
+		</button>
+	</div>
+	<div mat-dialog-content class="h-full max-h-full">
+		<!-- {{ _data.Mensaje }} -->
+		<!--
+			css-mode="true"
+
+
+
+
+			pagination-dynamic-bullets="true"
+	 -->
+		<swiper-container
+			#swiperContainer
+			class="aspect-square"
+			speed="500"
+			autoplay-delay="4500"
+			autoplay="true"
+			pagination="true"
+			navigation="true"
+			auto-height="true"
+			keyboard="true">
+			@if (_data.deuda.deuda > 0) {
+				<swiper-slide>
+					<img src="https://trilce.ucv.edu.pe/Noti/images/DeudaAlumno202301.png" alt="" class="aspect-square cursor-pointer relative" />
+					<div class="absolute top-[40%] w-full text-center flex flex-col gap-0.5 s:gap-1 sm:gap-4 md:gap-8">
+						<span class="font-bold text-s s:text-m sm:text-md md:text-base">{{ _data.deuda.nombre }} {{ _data.deuda.apellidos }}</span>
+						<span class="text-[#4f94e1] font-bold text-3xl s:text-4xl sm:text-5xl md:text-6xl">S/{{ _data.deuda.deuda }}</span>
+					</div>
+				</swiper-slide>
+			}
+			@for (noticias of _data.noticias; track noticias.nPubCodigo; let idx = $index) {
+				@if (idx < 4) {
+					<swiper-slide>
+						<img
+							src="https://trilce.ucv.edu.pe/Noti/images/{{ noticias.cPubImagen }}.jpg"
+							class="aspect-square cursor-pointer"
+							(click)="abrirUrl(noticias.cPubUrl)" />
+					</swiper-slide>
+				} @else {
+					<swiper-slide>
+						<img
+							src="https://trilce.ucv.edu.pe/Noti/images/{{ noticias.cPubImagen }}.jpg"
+							class="aspect-square cursor-pointer"
+							loading="lazy"
+							(click)="abrirUrl(noticias.cPubUrl)" />
+					</swiper-slide>
+				}
+			}
+		</swiper-container>
+	</div>
+	<!-- <div mat-dialog-actions align="end">
+		<button mat-button mat-dialog-close color="default" cdkFocusInitial>Cerrar</button>
+	</div> -->
+</div>

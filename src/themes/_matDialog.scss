@@ -1,0 +1,89 @@
+// .custom-modalbox {
+// 	max-width: 95vw !important;
+// }
+// .custom-modalbox .mat-mdc-dialog-container {
+// 	border-radius: var(--mdc-shape-small, 4px);
+// 	-webkit-border-radius: var(--mdc-shape-small, 4px);
+// 	-moz-border-radius: var(--mdc-shape-small, 4px);
+// 	-ms-border-radius: var(--mdc-shape-small, 4px);
+// 	-o-border-radius: var(--mdc-shape-small, 4px);
+// }
+// .custom-modalbox .mat-mdc-dialog-container .mdc-dialog__surface {
+// 	border-radius: var(--mdc-shape-small, 4px);
+// }
+// .custom-modalbox .mat-mdc-dialog-container .mdc-dialog__surface .mat-mdc-dialog-title:before {
+// 	content: none;
+// }
+// .custom-modalbox .mat-mdc-dialog-container .mdc-dialog__surface .mat-mdc-dialog-title:before {
+// 	content: none;
+// }
+// .custom-modalbox .mat-mdc-dialog-container .mdc-dialog__surface .mdc-dialog__title {
+// 	margin: 0;
+// 	padding: 16px 8px 8px 24px;
+// }
+// .custom-modalbox .mat-mdc-dialog-container .mdc-dialog__surface .mdc-dialog__content {
+// 	margin: 0;
+// 	padding: 0px 16px 0px 24px;
+// }
+// .custom-modalbox .mat-mdc-dialog-container .mdc-dialog__surface .mdc-dialog__actions {
+// 	margin: 0;
+// 	border: 0px;
+// 	padding: 8px 16px 16px 24px;
+// 	min-height: min-content;
+// }
+.custom-modalbox {
+	max-width: 95vw !important;
+}
+.custom-modalbox .mat-mdc-dialog-container {
+	border-radius: var(--mdc-shape-small, 4px);
+	-webkit-border-radius: var(--mdc-shape-small, 4px);
+	-moz-border-radius: var(--mdc-shape-small, 4px);
+	-ms-border-radius: var(--mdc-shape-small, 4px);
+	-o-border-radius: var(--mdc-shape-small, 4px);
+}
+.custom-modalbox .mat-mdc-dialog-container .mdc-dialog__surface {
+	border-radius: var(--mdc-shape-small, 4px);
+	-webkit-border-radius: var(--mdc-shape-small, 4px);
+	-moz-border-radius: var(--mdc-shape-small, 4px);
+	-ms-border-radius: var(--mdc-shape-small, 4px);
+	-o-border-radius: var(--mdc-shape-small, 4px);
+}
+
+.custom-modalbox .mat-mdc-dialog-container .mdc-dialog__surface [mat-dialog-title]:before {
+	content: none;
+}
+.custom-modalbox .mat-mdc-dialog-container .mdc-dialog__surface [mat-dialog-title] {
+	margin: 0;
+	padding: 8px 8px 8px 24px;
+	background-color: var(--primary);
+	color: white;
+}
+.custom-modalbox .mat-mdc-dialog-container .mdc-dialog__surface [mat-dialog-content] {
+	margin: 0;
+	padding: 8px 16px 8px 24px;
+}
+
+.custom-modalbox .mat-mdc-dialog-container .mdc-dialog__surface [mat-dialog-actions] {
+	margin: 0;
+	border: 0px;
+	padding: 8px 16px 16px 24px;
+	min-height: min-content;
+}
+
+.custom-modalbox.paddingSmall .mat-mdc-dialog-container .mdc-dialog__surface [mat-dialog-title] {
+	margin: 0;
+	padding: 8px 8px 8px 24px;
+	background-color: var(--primary);
+	color: white;
+}
+.custom-modalbox.paddingSmall .mat-mdc-dialog-container .mdc-dialog__surface [mat-dialog-content] {
+	margin: 0;
+	padding: 0px;
+}
+
+.custom-modalbox.paddingSmall .mat-mdc-dialog-container .mdc-dialog__surface [mat-dialog-actions] {
+	margin: 0;
+	border: 0px;
+	padding: 8px 16px 16px 24px;
+	min-height: min-content;
+}

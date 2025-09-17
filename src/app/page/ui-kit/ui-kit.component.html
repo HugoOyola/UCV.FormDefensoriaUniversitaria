@@ -1,0 +1,217 @@
+<div class="flex flex-col col-span-12 w-full p-2 md:p-4 gap-4 min-w-[300px] max-w-screen-2xl m-auto">
+	<mat-progress-bar mode="indeterminate" color="tertiary"></mat-progress-bar>
+	<div class="card flex-row gap-2">
+		<span>Dialog</span>
+		<button mat-raised-button class="" color="primary" (click)="openDialogVideo()">openDialogVideo</button>
+		<button mat-raised-button class="" color="secondary" (click)="openDialog('Ejemplo')">openDialog</button>
+		<button mat-raised-button class="" color="tertiary" (click)="openDialogResponse()">openDialogResponse</button>
+	</div>
+	<div class="card flex-row gap-2">
+		<span>Ip</span>
+		<code>{{ _ipService.getIp() }}</code>
+	</div>
+	<div class="card flex-row gap-2">
+		<span>Host</span>
+		<code>{{ _sharedCoreService.getBrowserInfo() }}</code>
+	</div>
+	<div class="card">
+		<span>Skeleton</span>
+		<div class="flex flex-col gap-2">
+			<span>table</span>
+			<app-skeleton [count]="1" appearance="table" [tableCol]="5" [tableRow]="3" class="w-full"></app-skeleton>
+			<span>rectangle</span>
+			<app-skeleton [count]="1" appearance="rectangle" class="w-full"></app-skeleton>
+			<span>circle</span>
+			<app-skeleton [count]="2" appearance="circle" [theme]="{width: '64px', height: '64px'}"></app-skeleton>
+			<span>rounded</span>
+			<app-skeleton [count]="2" appearance="rounded" [theme]="{width: '64px', height: '64px'}"></app-skeleton>
+			<span>rounded direccion</span>
+			<app-skeleton [count]="2" appearance="rounded" [direccion]="'col'" [theme]="{width: '64px', height: '64px'}"></app-skeleton>
+			<span>square</span>
+			<app-skeleton [count]="2" appearance="square" [theme]="{width: '64px', height: '64px'}"></app-skeleton>
+			<span>square gap</span>
+			<app-skeleton [count]="2" [gap]="{gap: '2.25rem'}" appearance="square" [theme]="{width: '64px', height: '64px'}"></app-skeleton>
+		</div>
+	</div>
+	<div class="card">
+		<span>Buttons</span>
+		<section>
+			<div class="example-label">Basic</div>
+			<div class="flex flex-row gap-2">
+				<button mat-button>Basic</button>
+				<button mat-button color="primary">Primary</button>
+				<button mat-button color="accent">Accent</button>
+				<button mat-button color="warn">Warn</button>
+				<button mat-button color="default">default</button>
+				<button mat-button color="success">success</button>
+				<button mat-button color="secondary">secondary</button>
+				<button mat-button disabled>Disabled</button>
+				<a mat-button href="https://www.google.com/" target="_blank">Link</a>
+			</div>
+		</section>
+		<mat-divider></mat-divider>
+		<section>
+			<div class="example-label">Raised</div>
+			<div class="flex flex-row gap-2">
+				<button mat-raised-button>Basic</button>
+				<button mat-raised-button color="primary">Primary</button>
+				<button mat-raised-button color="tertiary">tertiary</button>
+				<button mat-raised-button color="accent">Accent</button>
+				<button mat-raised-button color="warn">Warn</button>
+				<button mat-raised-button color="default">default</button>
+				<button mat-raised-button color="success">success</button>
+				<button mat-raised-button color="secondary">secondary</button>
+				<button mat-raised-button disabled>Disabled</button>
+				<a mat-raised-button href="https://www.google.com/" target="_blank">Link</a>
+			</div>
+		</section>
+		<mat-divider></mat-divider>
+		<section>
+			<div class="example-label">Stroked</div>
+			<div class="flex flex-row gap-2">
+				<button mat-stroked-button>Basic</button>
+				<button mat-stroked-button color="primary">Primary</button>
+				<button mat-stroked-button color="accent">Accent</button>
+				<button mat-stroked-button color="warn">Warn</button>
+				<button mat-stroked-button color="default">default</button>
+				<button mat-stroked-button color="success">success</button>
+				<button mat-stroked-button color="secondary">secondary</button>
+				<button mat-stroked-button disabled>Disabled</button>
+				<a mat-stroked-button href="https://www.google.com/" target="_blank">Link</a>
+			</div>
+		</section>
+		<mat-divider></mat-divider>
+		<section>
+			<div class="example-label">Flat</div>
+			<div class="flex flex-row gap-2">
+				<button mat-flat-button>Basic</button>
+				<button mat-flat-button color="primary">Primary</button>
+				<button mat-flat-button color="accent">Accent</button>
+				<button mat-flat-button color="warn">Warn</button>
+				<button mat-flat-button color="default">default</button>
+				<button mat-flat-button color="success">success</button>
+				<button mat-flat-button color="secondary">secondary</button>
+				<button mat-flat-button disabled>Disabled</button>
+				<a mat-flat-button href="https://www.google.com/" target="_blank">Link</a>
+			</div>
+		</section>
+		<mat-divider></mat-divider>
+		<section>
+			<div class="example-label">Icon</div>
+			<div class="flex flex-row gap-2">
+				<div class="flex flex-wrap justify-between">
+					<button mat-icon-button>
+						<mat-icon class="material-icons-round">favorite</mat-icon>
+					</button>
+					<button mat-icon-button color="primary">
+						<mat-icon class="material-icons-round">favorite</mat-icon>
+					</button>
+					<button mat-icon-button color="accent">
+						<mat-icon class="material-icons-round">favorite</mat-icon>
+					</button>
+					<button mat-icon-button color="warn">
+						<mat-icon class="material-icons-round">favorite</mat-icon>
+					</button>
+					<button mat-icon-button color="default">
+						<mat-icon class="material-icons-round">favorite</mat-icon>
+					</button>
+					<button mat-icon-button color="success">
+						<mat-icon class="material-icons-round">favorite</mat-icon>
+					</button>
+					<button mat-icon-button color="secondary">
+						<mat-icon class="material-icons-round">favorite</mat-icon>
+					</button>
+					<button mat-icon-button disabled>
+						<mat-icon class="material-icons-round">favorite</mat-icon>
+					</button>
+				</div>
+			</div>
+		</section>
+		<mat-divider></mat-divider>
+		<section>
+			<div class="example-label">FAB</div>
+			<div class="flex flex-row gap-2">
+				<div class="flex flex-wrap justify-between gap-2">
+					<div class="flex justify-center w-[120px]">
+						<button mat-fab color="primary">
+							<mat-icon class="material-icons-round">bookmark</mat-icon>
+						</button>
+					</div>
+					<div class="flex justify-center w-[120px]">
+						<button mat-fab color="accent">
+							<mat-icon class="material-icons-round">bookmark</mat-icon>
+						</button>
+					</div>
+					<div class="flex justify-center w-[120px]">
+						<button mat-fab color="warn">
+							<mat-icon class="material-icons-round">bookmark</mat-icon>
+						</button>
+					</div>
+					<div class="flex justify-center w-[120px]">
+						<button mat-fab color="default">
+							<mat-icon class="material-icons-round">bookmark</mat-icon>
+						</button>
+					</div>
+					<div class="flex justify-center w-[120px]">
+						<button mat-fab color="success">
+							<mat-icon class="material-icons-round">bookmark</mat-icon>
+						</button>
+					</div>
+					<div class="flex justify-center w-[120px]">
+						<button mat-fab color="secondary">
+							<mat-icon class="material-icons-round">bookmark</mat-icon>
+						</button>
+					</div>
+					<div class="flex justify-center w-[120px]">
+						<button mat-fab disabled>
+							<mat-icon class="material-icons-round">bookmark</mat-icon>
+						</button>
+					</div>
+				</div>
+			</div>
+		</section>
+		<mat-divider></mat-divider>
+		<section>
+			<div class="example-label">Mini FAB</div>
+			<div class="flex flex-row gap-2">
+				<div class="flex flex-wrap justify-between gap-2">
+					<div class="flex justify-center w-[120px]">
+						<button mat-mini-fab color="primary">
+							<mat-icon class="material-icons-round">filter_list</mat-icon>
+						</button>
+					</div>
+					<div class="flex justify-center w-[120px]">
+						<button mat-mini-fab color="accent">
+							<mat-icon class="material-icons-round">filter_list</mat-icon>
+						</button>
+					</div>
+					<div class="flex justify-center w-[120px]">
+						<button mat-mini-fab color="warn">
+							<mat-icon class="material-icons-round">filter_list</mat-icon>
+						</button>
+					</div>
+					<div class="flex justify-center w-[120px]">
+						<button mat-mini-fab color="default">
+							<mat-icon class="material-icons-round">filter_list</mat-icon>
+						</button>
+					</div>
+					<div class="flex justify-center w-[120px]">
+						<button mat-mini-fab color="success">
+							<mat-icon class="material-icons-round">filter_list</mat-icon>
+						</button>
+					</div>
+					<div class="flex justify-center w-[120px]">
+						<button mat-mini-fab color="secondary">
+							<mat-icon class="material-icons-round">filter_list</mat-icon>
+						</button>
+					</div>
+					<div class="flex justify-center w-[120px]">
+						<button mat-mini-fab disabled>
+							<mat-icon class="material-icons-round">filter_list</mat-icon>
+						</button>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+</div>

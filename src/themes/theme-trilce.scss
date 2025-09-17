@@ -1,0 +1,237 @@
+@use '@angular/material' as mat;
+@use './_buttons';
+@use './_checkbox';
+@use './_chip';
+@use './_progress-bar';
+@use './_radio-button';
+@use './_slide-toggle';
+@use './_global';
+@include mat.elevation-classes();
+@include mat.app-background();
+
+//* gama colores
+
+$my-primary-color: (
+	50: #e7ebf1,
+	100: #c1ccdf,
+	200: #99abc8,
+	300: #718bb2,
+	400: #5172a3,
+	500: #2d5a96,
+	600: #26528d,
+	700: #1c4981,
+	800: #153f75,
+	900: #233559,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #000000,
+		400: #ffffff,
+		500: #ffffff,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
+	),
+);
+$my-accent-color: (
+	50: #fdf3f3,
+	100: #fde3e3,
+	200: #fbcdcd,
+	300: #f8a9a9,
+	400: #f17878,
+	500: #e74c4c,
+	600: #d32f2f,
+	700: #b12424,
+	800: #932121,
+	900: #7a2222,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #000000,
+		400: #000000,
+		500: #000000,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
+	),
+);
+$my-warn-color: (
+	50: #ebeff8,
+	100: #ced8e5,
+	200: #b2bdce,
+	300: #94a3b8,
+	400: #7e8fa6,
+	500: #687b96,
+	600: #5a6d84,
+	700: #49596d,
+	800: #3a4757,
+	900: #283240,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #000000,
+		400: #000000,
+		500: #000000,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
+	),
+);
+$my-secondary-color: (
+	50: #e1f4fe,
+	100: #b4e3fb,
+	200: #83d1f9,
+	300: #54bff5,
+	400: #36b1f3,
+	500: #24a4ef,
+	600: #2396e0,
+	700: #2083cc,
+	800: #1d72b8,
+	900: #185295,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #000000,
+		400: #000000,
+		500: #000000,
+		600: #000000,
+		700: #000000,
+		800: #ffffff,
+		900: #ffffff,
+	),
+);
+$my-default-color: (
+	50: #f8f8f8,
+	100: #f0f0f0,
+	200: #e6e6e6,
+	300: #d5d5d5,
+	400: #b0b0b0,
+	500: #909090,
+	600: #686868,
+	700: #555555,
+	800: #373737,
+	900: #171717,
+	contrast: (
+		50: #64748b,
+		100: #64748b,
+		200: #64748b,
+		300: #64748b,
+		400: #64748b,
+		500: #64748b,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
+	),
+);
+$my-success-color: (
+	50: #e4f7ea,
+	100: #beebcc,
+	200: #92deac,
+	300: #5fd28a,
+	400: #28c76f,
+	500: #00bc55,
+	600: #00ad4b,
+	700: #009a3f,
+	800: #008933,
+	900: #00691e,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #000000,
+		400: #ffffff,
+		500: #ffffff,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
+	),
+);
+
+//* paleta de colores
+$my-palette-primary: mat.m2-define-palette($my-primary-color, 900);
+$my-palette-accent: mat.m2-define-palette($my-accent-color, 600);
+$my-palette-secondary: mat.m2-define-palette($my-secondary-color, 800);
+$my-palette-default: mat.m2-define-palette($my-default-color, 50);
+$my-palette-success: mat.m2-define-palette($my-success-color, 400);
+// $my-palette-warn: mat.m2-define-palette($my-warn-color, 300);
+// $my-palette-secondary: mat.m2-define-palette($my-secondary-color, 900);
+// * font
+
+$my-custom-level: mat.m2-define-typography-config(
+	$font-family: 'Inter var',
+	$body-2: mat.m2-define-typography-level(14px, 24px, 500),
+	$body-1: mat.m2-define-typography-level(14px, 20px, 400),
+	$headline-1: mat.m2-define-typography-level(24px, 32px, 400),
+	$headline-2: mat.m2-define-typography-level(24px, 32px, 400),
+	$headline-3: mat.m2-define-typography-level(24px, 32px, 400),
+	$headline-4: mat.m2-define-typography-level(24px, 32px, 400),
+	$headline-5: mat.m2-define-typography-level(24px, 32px, 400),
+	$headline-6: mat.m2-define-typography-level(24px, 32px, 400),
+	$caption: mat.m2-define-typography-level(12px, 20px, 400),
+	$button: mat.m2-define-typography-level(14px, 14px, 400),
+);
+
+// $my-custom-level: mat.m2-define-typography-config(
+// 	$font-family: 'Intervar',
+
+// 	$display-1: mat.m2-define-typography-level(34px, 40px, 400),
+// 	$headline: mat.m2-define-typography-level(24px, 32px, 400),
+// 	$title: mat.m2-define-typography-level(20px, 32px, 500),
+// 	$subheading-2: mat.m2-define-typography-level(16px, 28px, 400),
+// 	$subheading-1: mat.m2-define-typography-level(15px, 24px, 400),
+// 	$body-2: mat.m2-define-typography-level(14px, 24px, 500),
+// 	$body-1: mat.m2-define-typography-level(14px, 20px, 400),
+// 	$caption: mat.m2-define-typography-level(12px, 20px, 400),
+// 	$button: mat.m2-define-typography-level(14px, 14px, 500),
+// 	$input: mat.m2-define-typography-level(inherit, 1.125, 400),
+// );
+
+//* tema propio
+$my-theme: mat.m2-define-light-theme(
+	(
+		color: (
+			primary: $my-palette-primary,
+			accent: $my-palette-accent,
+			// warn: $my-palette-warn,
+		),
+		typography: $my-custom-level,
+	)
+);
+//* aplicar tema a angular
+
+$variants: (
+	secondary: $my-palette-secondary,
+	success: $my-palette-success,
+	default: $my-palette-default,
+);
+@include buttons.color($my-theme, $variants);
+@include checkbox.color($my-theme, $variants);
+@include chip.color($my-theme, $variants);
+@include progress-bar.color($my-theme, $variants);
+@include radio-button.color($my-theme, $variants);
+@include slide-toggle.color($my-theme, $variants);
+@include global.color($my-theme, $variants);
+@include mat.all-component-themes($my-theme);
+
+.buttonCustom {
+	@include mat.elevation-transition();
+	@include mat.elevation(2);
+	&:hover {
+		@include mat.elevation(4);
+	}
+	&:active {
+		@include mat.elevation(8);
+	}
+}
+.mat-tree {
+	font-family: 'Inter var', sans-serif !important;
+}

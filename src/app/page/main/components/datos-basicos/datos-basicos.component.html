@@ -1,0 +1,105 @@
+<div class="w-full flex flex-col gap-2">
+	<div class="flex flex-col items-center">
+		<div class="relative flex items-center justify-center mb-2">
+			@if (this._mainSharedService.datosPersonales()) {
+				<div class="relative w-[100px] h-[100px]">
+					<img
+						src="https://trilce.ucv.edu.pe/Fotos/mediana/{{ this._mainSharedService.datosPersonales()?.cPerCodigo }}.jpg"
+						onerror="this.src='assets/img/user.jpg'"
+						class="w-full h-full rounded-full object-contain border border-solid border-primary/10"
+						alt="[No Imagen]" />
+					<span class="top-0 right-3 absolute w-2.5 h-2.5 bg-green-400 border-2 border-white rounded-full"></span>
+				</div>
+			} @else {
+				<app-skeleton [count]="1" appearance="circle" [theme]="{width: '100px', height: '100px'}"></app-skeleton>
+			}
+		</div>
+		@if (this._mainSharedService.datosPersonales()) {
+			<span class="text-sm text-textPrimary text-center font-bold">
+				{{ this._mainSharedService.datosPersonales()?.cPerNombre }} {{ this._mainSharedService.datosPersonales()?.cPerApellido }}
+			</span>
+			<span class="text-sm text-textPrimary text-center font-semibold">
+				Código: {{ this._mainSharedService.datosPersonales()?.cPerCodigo }}
+			</span>
+		} @else {
+			<app-skeleton [count]="2" appearance="rounded" direccion="col" [theme]="{width: '150px', height: '16px'}"></app-skeleton>
+		}
+	</div>
+	<div class="flex flex-row gap-2 items-center justify-center">
+		@if (this._mainSharedService.datosPersonales()) {
+			@for (icon of icons; track icon) {
+				<a
+					href="{{ icon.url }}"
+					target="_blank"
+					class="w-7 h-7 rounded-lg border-[#C4CFE3] border border-solid bg-white flex items-center justify-center">
+					<img src="assets/svg/{{ icon.svg }}.svg" alt="" />
+				</a>
+				<!-- <img src="assets/svg/{{ g }}.svg" alt="" /> -->
+			}
+		} @else {
+			<app-skeleton [count]="5" appearance="square" [theme]="{width: '28px', height: '28px'}"></app-skeleton>
+		}
+	</div>
+	@if (this._mainSharedService.datosPersonales()) {
+		<div class="flex flex-col gap-2 w-full">
+			@if (this._mainSharedService.datosPersonales()?.cPerNatSexoDes !== '') {
+				<div class="w-full flex items-center justify-start gap-1">
+					<mat-icon class="material-icons-round w-5 h-5 text-lg text-textPrimary">auto_awesome</mat-icon>
+					<span class="text-m font-semibold text-textPrimary">Sexo:</span>
+					<span class="text-sm text-textPrimary">{{ this._mainSharedService.datosPersonales()?.cPerNatSexoDes?.split(':')?.[1] }}</span>
+				</div>
+			}
+			@if (this._mainSharedService.datosPersonales()?.cPerNatEstCivilDes !== '') {
+				<div class="w-full flex items-center justify-start gap-1">
+					<mat-icon class="material-icons-round w-5 h-5 text-lg text-textPrimary">home_work</mat-icon>
+					<span class="text-m font-semibold text-textPrimary">E.Civil</span>
+					<span class="text-sm text-textPrimary">{{ this._mainSharedService.datosPersonales()?.cPerNatEstCivilDes }}</span>
+				</div>
+			}
+
+			@if (this._mainSharedService.datosPersonales()?.Mailrecupe !== '') {
+				<div class="w-full flex items-center justify-start gap-1">
+					<mat-icon class="material-icons-round w-5 h-5 text-lg text-textPrimary">email</mat-icon>
+					<span class="text-m font-semibold text-textPrimary">Correo de verificación:</span>
+					<span class="text-sm text-textPrimary">{{ this._mainSharedService.datosPersonales()?.Mailrecupe }}</span>
+				</div>
+			}
+			<!-- @if (this._mainSharedService.datosPersonales()?.TipoContrato !== '') {
+			<div class="w-full flex items-center justify-start gap-1">
+				<mat-icon class="material-icons-round w-5 h-5 text-lg text-textPrimary">how_to_reg</mat-icon>
+				<span class="text-m font-semibold text-textPrimary">Régimen de dedicación:</span>
+				<span class="text-sm text-textPrimary">{{ this._mainSharedService.datosPersonales()?.TipoContrato }}</span>
+			</div>
+		} -->
+			<!-- @if (this._mainSharedService.datosPersonales()?.Categoria !== '') {
+			<div class="w-full flex items-center justify-start gap-1">
+				<mat-icon class="material-icons-round w-5 h-5 text-lg text-textPrimary">how_to_reg</mat-icon>
+				<span class="text-m font-semibold text-textPrimary">Categoría:</span>
+				<span class="text-sm text-textPrimary">{{ this._mainSharedService.datosPersonales()?.Categoria }}</span>
+			</div>
+		} -->
+			<!-- @if (this._mainSharedService.datosPersonales()?.MayorGradoObtenido !== '') {
+			<div class="w-full flex items-center justify-start gap-1">
+				<mat-icon class="material-icons-round w-5 h-5 text-lg text-textPrimary">school</mat-icon>
+				<span class="text-m font-semibold text-textPrimary">Máximo grado obtenido:</span>
+				<span class="text-sm text-textPrimary">{{ this._mainSharedService.datosPersonales()?.MayorGradoObtenido }}</span>
+			</div>
+		} -->
+			<!-- <div class="w-full flex items-center justify-start gap-1">
+					<mat-icon class="material-icons-round w-5 h-5 text-lg text-textPrimary">school</mat-icon>
+					<span class="text-m font-semibold text-textPrimary">{{ dato.etiqueta }}</span>
+					<span class="text-sm text-textPrimary">{{ this._mainSharedService.datosPersonales()?.valor }}</span>
+				</div> -->
+		</div>
+	} @else {
+		<div class="flex flex-col gap-2 w-full">
+			@for (r of [1, 2, 3, 4]; track r) {
+				<div class="flex flex-row justify-start w-full items-center">
+					<app-skeleton [count]="1" appearance="square" [theme]="{width: '20px', height: '20px'}"></app-skeleton>
+					<app-skeleton [count]="1" appearance="rounded" [theme]="{width: '60px', height: '16px'}"></app-skeleton>
+					<app-skeleton [count]="1" appearance="rounded" [theme]="{width: '100%', height: '16px'}" class="w-full"></app-skeleton>
+				</div>
+			}
+		</div>
+	}
+</div>

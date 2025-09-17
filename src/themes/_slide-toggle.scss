@@ -1,0 +1,40 @@
+// Button variants
+@use 'sass:map';
+@use 'sass:meta';
+@use '@angular/material' as mat;
+
+// Applies a property to an mat-button element for each of the supported palettes.
+@mixin _theme-property($theme, $property, $hue, $variants) {
+	$background: map.get($theme, background);
+	$foreground: map.get($theme, foreground);
+
+	@each $variant, $variant-palette in $variants {
+		&.mat-#{$variant} {
+			$color: mat.m2-get-color-from-palette($variant-palette, $hue);
+
+			@if $property == 'color' {
+				--mdc-switch-selected-focus-state-layer-color: #{$color};
+				--mdc-switch-selected-handle-color: #{$color};
+				--mdc-switch-selected-hover-state-layer-color: #{$color};
+				--mdc-switch-selected-pressed-state-layer-color: #{$color};
+				--mdc-switch-selected-focus-handle-color: #{$color}cc;
+				--mdc-switch-selected-hover-handle-color: #{$color}cc;
+				--mdc-switch-selected-pressed-handle-color: #{$color}cc;
+				--mdc-switch-selected-focus-track-color: #{$color}66;
+				--mdc-switch-selected-hover-track-color: #{$color}66;
+				--mdc-switch-selected-pressed-track-color: #{$color}66;
+				--mdc-switch-selected-track-color: #{$color}66;
+			} @else {
+			}
+		}
+	}
+}
+
+@mixin color($config-or-theme, $variants) {
+	$config: mat.m2-get-color-config($config-or-theme);
+	$foreground: map.get($config, foreground);
+	$background: map.get($config, background);
+	.mat-mdc-slide-toggle {
+		@include _theme-property($config, 'color', text, $variants);
+	}
+}

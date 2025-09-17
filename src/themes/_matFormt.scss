@@ -1,0 +1,42 @@
+:root {
+	--mdc-shape-small: 12px;
+	--matformRadius: 12px;
+}
+
+.mdc-text-field--outlined {
+	border-radius: var(--matformRadius) !important;
+	background-color: white;
+	--mdc-outlined-text-field-outline-width: 1px;
+	--mdc-outlined-text-field-focus-outline-width: 2px;
+	--mdc-outlined-text-field-container-shape: var(--matformRadius) !important;
+}
+div.mat-mdc-select-panel {
+	border-top-left-radius: 4px !important;
+	border-top-right-radius: 4px !important;
+	border-bottom-left-radius: var(--matformRadius) !important;
+	border-bottom-right-radius: var(--matformRadius) !important;
+}
+.mat-mdc-form-field-infix {
+	min-height: 40px !important;
+}
+.mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+.mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-floating-label:not(.mdc-floating-label--float-above) {
+	top: 50% !important;
+}
+.mat-mdc-text-field-wrapper .mat-mdc-form-field-flex.mat-mdc-floating-label .mdc-floating-label--float-above {
+	top: 28px !important;
+}
+
+.mdc-checkbox__background {
+	border-radius: 4px !important;
+}
+
+.mat-form-field.mat-form-field-appearance-fill .mat-form-field-wrapper .mat-form-field-flex {
+	min-height: 38px !important;
+}
+.mat-form-field.mat-form-field-appearance-outline .mat-form-field-wrapper .mat-form-field-flex {
+	min-height: 38px !important;
+}

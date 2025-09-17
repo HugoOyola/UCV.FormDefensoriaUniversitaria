@@ -1,0 +1,40 @@
+<div
+	class="flex px-0.5 flex-wrap"
+	[ngClass]="{
+		'flex-row': direccion === 'row',
+		'flex-col': direccion === 'col'
+	}"
+	[ngStyle]="gap">
+	@for (count of countArray; track count) {
+		@if (appearance !== 'table') {
+			<div
+				class="skeleton-loader pulse"
+				[ngClass]="{
+					'rounded-full': appearance === 'circle',
+					'rounded-3xl': appearance === 'rounded',
+					'rounded-md ': appearance === 'rectangle',
+					'rounded-lg': appearance === 'square'
+				}"
+				[ngStyle]="theme"></div>
+		} @else {
+			<div class="w-full flex flex-col gap-2">
+				<div class="flex flex-row gap-2 bg-[#FAFBFE] p-4 rounded-t-lg border-0 border-b border-dashed border-[#cbd5e1]">
+					<!-- @for (row of tableRowArray; track row) {
+						<div class="rounded-md w-full h-5">
+							<div class="skeleton-loader pulse rounded-md w-1/2 h-5"></div>
+						</div>
+					} -->
+				</div>
+				<!-- @for (e of tableColArray; track e) {
+					<div class="flex flex-row gap-2 p-4 border-0 border-b border-dashed border-[#cbd5e1]">
+						@for (row of tableRowArray; track row) {
+							<div class="rounded-md w-full h-5">
+								<div class="skeleton-loader pulse rounded-md w-full h-5"></div>
+							</div>
+						}
+					</div>
+				} -->
+			</div>
+		}
+	}
+</div>

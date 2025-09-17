@@ -1,0 +1,41 @@
+<div>
+	@switch (data.Num_Config) {
+		@case (1) {
+			<!-- Config 1 (Mensaje de Alerta)-->
+			<div style="max-width: 400px; width: fit-content">
+				<div class="flex flex-row justify-between items-center" mat-dialog-title>
+					<span class="text-base">Alerta</span>
+					<button mat-icon-button mat-dialog-close color="secundary">
+						<mat-icon class="material-icons-round">close</mat-icon>
+					</button>
+				</div>
+				<div mat-dialog-content [innerHTML]="transformYourHtml(data.Mensaje)">
+					<!-- {{ data.Mensaje }} -->
+				</div>
+				<div mat-dialog-actions align="end">
+					<button mat-button mat-dialog-close color="default" cdkFocusInitial>Cerrar</button>
+				</div>
+			</div>
+		}
+		@case (2) {
+			<!-- Config 2 (Mensaje de Alerta con confirmación)-->
+			<div class=" " style="max-width: 400px; width: fit-content">
+				<div class="flex flex-row justify-between items-center" mat-dialog-title>
+					<span class="text-base">Alerta</span>
+					<button mat-icon-button mat-dialog-close color="secundary">
+						<mat-icon class="material-icons-round">close</mat-icon>
+					</button>
+				</div>
+				<div mat-dialog-content [innerHTML]="transformYourHtml(data.Mensaje)">
+					<!-- {{ data.Mensaje }} -->
+				</div>
+				<div mat-dialog-actions align="end">
+					<button mat-button color="default" mat-dialog-close cdkFocusInitial>No</button>
+					<button mat-raised-button color="accent" [mat-dialog-close]="true">Si</button>
+				</div>
+			</div>
+		}
+
+		@default {}
+	}
+</div>

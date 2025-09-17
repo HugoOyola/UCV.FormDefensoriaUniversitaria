@@ -1,0 +1,20 @@
+<!-- Config 1 (Mensaje de Alerta)-->
+<div class="w-full h-screen">
+	<div class="p-2 pb-0">
+		<button mat-mini-fab class="bg-white shadow-md hover:bg-black/[.03] active:bg-black/[.1]" (click)="volverAtras()">
+			<mat-icon class="material-icons-round text-[#6B6C6C]">arrow_back</mat-icon>
+		</button>
+	</div>
+	<div class="w-full h-[calc(100%-48px)] m-0 p-0 overflow-hidden">
+		<!-- {{ data.Mensaje }} -->
+		<iframe
+			#iframe
+			width="100%"
+			height="100%"
+			frameBorder="0"
+			[src]="urlSafe"
+			frameborder="0"
+			class="w-full h-full overflow-hidden block border-0"></iframe>
+		<!-- (load)="iframeLoaded()" -->
+	</div>
+</div>

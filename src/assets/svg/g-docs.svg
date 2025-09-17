@@ -1,0 +1,19 @@
+<svg width="12" height="17" viewBox="0 0 12 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Google Docs Icon">
+<path id="Element" d="M1.12492 0C0.503642 0 0 0.503638 0 1.12491V15.3737C0 15.995 0.503642 16.4986 1.12492 16.4986H10.8742C11.4955 16.4986 11.9991 15.995 11.9991 15.3737V4.49962L7.49944 0H1.12492Z" fill="#4E8DF5"/>
+<path id="Element_2" d="M11.999 8.34332V4.49989L11.3428 3.84369H8.17831C7.92776 3.84369 7.80228 4.14662 7.97945 4.32378L11.999 8.34332Z" fill="url(#paint0_linear_13448_19843)"/>
+<path id="Element_3" d="M7.50034 0L12 4.49962H8.62525C8.00398 4.49962 7.50034 3.99599 7.50034 3.37472V0Z" fill="#A6C5FA"/>
+<g id="Element_4">
+<path d="M9.00019 8.24932H3.00064V8.99926H9.00019V8.24932Z" fill="white"/>
+<path d="M9.00019 9.7492H3.00064V10.4991H9.00019V9.7492Z" fill="white"/>
+<path d="M3.00064 11.2491H9.00019V11.999H3.00064V11.2491Z" fill="white"/>
+<path d="M7.5003 12.7489H3.00064V13.4989H7.5003V12.7489Z" fill="white"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_13448_19843" x1="9.74919" y1="8.34332" x2="9.74919" y2="3.74995" gradientUnits="userSpaceOnUse">
+<stop stop-color="#4E8DF5"/>
+<stop offset="1" stop-color="#3D6ACD"/>
+</linearGradient>
+</defs>
+</svg>
