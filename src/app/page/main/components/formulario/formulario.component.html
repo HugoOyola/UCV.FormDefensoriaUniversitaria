@@ -24,7 +24,7 @@
   <form [formGroup]="formularioForm" class="space-y-8">
     <!-- Información Institucional -->
     <div class="bg-white rounded-xl shadow-sm border border-solid border-gray-200 overflow-hidden">
-      <div class="bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b border-blue-200">
+      <div class="bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-solid border-0 border-b border-blue-200">
         <div class="flex items-center gap-3">
           <div class="bg-blue-600 p-2 rounded-lg">
             <i class="pi pi-building text-white text-lg"></i>
@@ -43,7 +43,8 @@
               Filial <span class="text-red-500">*</span>
             </label>
             <p-select formControlName="filial" [options]="filialOptions" placeholder="Seleccione una sede"
-              optionLabel="label" optionValue="value" [filter]="true" class="w-full" styleClass="w-full">
+              optionLabel="label" optionValue="value" [filter]="true" appendTo="body" [style]="{ width: '100%' }"
+              class="w-full">
             </p-select>
             <p class="text-red-500 text-sm mt-1" *ngIf="isInvalid('filial')">
               <i class="pi pi-exclamation-circle mr-1"></i>
@@ -56,7 +57,8 @@
 
     <!-- Información Personal -->
     <div class="bg-white rounded-xl shadow-sm border border-solid border-gray-200 overflow-hidden">
-      <div class="bg-gradient-to-r from-green-50 to-green-100 px-6 py-4 border-b border-green-200">
+      <div
+        class="bg-gradient-to-r from-green-50 to-green-100 px-6 py-4 border-solid border-0 border-b border-green-200">
         <div class="flex items-center gap-3">
           <div class="bg-green-600 p-2 rounded-lg">
             <i class="pi pi-user text-white text-lg"></i>
@@ -149,7 +151,8 @@
 
     <!-- Tipo de Usuario -->
     <div class="bg-white rounded-xl shadow-sm border border-solid border-gray-200 overflow-hidden">
-      <div class="bg-gradient-to-r from-purple-50 to-purple-100 px-6 py-4 border-b border-purple-200">
+      <div
+        class="bg-gradient-to-r from-purple-50 to-purple-100 px-6 py-4 border-solid border-0 border-b border-purple-200">
         <div class="flex items-center gap-3">
           <div class="bg-purple-600 p-2 rounded-lg">
             <i class="pi pi-users text-white text-lg"></i>
@@ -210,8 +213,9 @@
     </div>
 
     <!-- Información Académica/Laboral -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <div class="bg-gradient-to-r from-indigo-50 to-indigo-100 px-6 py-4 border-b border-indigo-200">
+    <div class="bg-white rounded-xl shadow-sm border border-solid border-gray-200 overflow-hidden">
+      <div
+        class="bg-gradient-to-r from-indigo-50 to-indigo-100 px-6 py-4 border-solid border-0 border-b border-indigo-200">
         <div class="flex items-center gap-3">
           <div class="bg-indigo-600 p-2 rounded-lg">
             <i class="pi pi-building text-white text-lg"></i>
@@ -231,8 +235,9 @@
             </label>
             <p-select formControlName="escuela" [options]="escuelaOptions"
               placeholder="Seleccione su Escuela / Área / Servicio" optionLabel="label" optionValue="value"
-              [filter]="true" class="w-full" styleClass="w-full">
+              [filter]="true" appendTo="body" [style]="{ width: '100%' }" class="w-full">
             </p-select>
+
             <p class="text-red-500 text-sm mt-1" *ngIf="isInvalid('escuela')">
               <i class="pi pi-exclamation-circle mr-1"></i>
               Seleccione una opción.
@@ -243,8 +248,8 @@
     </div>
 
     <!-- Adjuntos -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <div class="bg-gradient-to-r from-teal-50 to-teal-100 px-6 py-4 border-b border-teal-200">
+    <div class="bg-white rounded-xl shadow-sm border border-solid border-gray-200 overflow-hidden">
+      <div class="bg-gradient-to-r from-teal-50 to-teal-100 px-6 py-4 border-solid border-0 border-b border-teal-200">
         <div class="flex items-center gap-3">
           <div class="bg-teal-600 p-2 rounded-lg">
             <i class="pi pi-paperclip text-white text-lg"></i>
@@ -256,7 +261,7 @@
         </div>
       </div>
       <div class="p-6">
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+        <div class="bg-blue-50 border border-solid border-blue-200 rounded-lg p-4 mb-4">
           <div class="flex items-start gap-3">
             <i class="pi pi-info-circle text-blue-600 text-lg mt-0.5"></i>
             <div class="text-sm text-blue-800">
@@ -296,7 +301,7 @@
           </h4>
           <div class="space-y-2">
             <div *ngFor="let f of selectedFiles; index as i"
-              class="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg p-3 hover:bg-gray-100 transition-colors">
+              class="flex items-center justify-between bg-gray-50 border border-solid border-gray-200 rounded-lg p-3 hover:bg-gray-100 transition-colors">
               <div class="flex items-center gap-3 flex-1 min-w-0">
                 <i class="pi pi-file text-gray-500 text-lg"></i>
                 <div class="min-w-0 flex-1">
@@ -317,8 +322,8 @@
     </div>
 
     <!-- Descripción del Reclamo -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <div class="bg-gradient-to-r from-red-50 to-red-100 px-6 py-4 border-b border-red-200">
+    <div class="bg-white rounded-xl shadow-sm border border-solid border-gray-200 overflow-hidden">
+      <div class="bg-gradient-to-r from-red-50 to-red-100 px-6 py-4 border-solid border-0 border-b border-red-200">
         <div class="flex items-center gap-3">
           <div class="bg-red-600 p-2 rounded-lg">
             <i class="pi pi-file-edit text-white text-lg"></i>
@@ -343,22 +348,24 @@
               </div>
             </div>
 
-            <p-textarea formControlName="expone" rows="6"
+            <textarea pTextarea formControlName="expone" rows="6" [autoResize]="true" [invalid]="isInvalid('expone')"
               placeholder="Describa detalladamente los hechos que originan la denuncia o reclamación y el alcance de su pretensión..."
-              class="w-full" styleClass="w-full">
-            </p-textarea>
-            <p class="text-xs text-gray-500 mt-2">
-              <i class="pi pi-info-circle mr-1"></i>
-              Mínimo 50 caracteres.
-            </p>
-            <p class="text-red-500 text-sm mt-1" *ngIf="isInvalid('expone')">
-              <i class="pi pi-exclamation-circle mr-1"></i>
-              La descripción es muy corta.
-            </p>
+              class="w-full"></textarea>
+
+            <div class="flex justify-between">
+              <p class="text-xs text-gray-500 mt-2">
+                <i class="pi pi-info-circle mr-1"></i>
+                Mínimo 50 caracteres.
+              </p>
+              <p class="text-red-500 text-sm mt-1" *ngIf="isInvalid('expone')">
+                <i class="pi pi-exclamation-circle mr-1"></i>
+                La descripción es muy corta.
+              </p>
+            </div>
           </div>
 
           <!-- Divisor -->
-          <div class="border-t border-gray-200"></div>
+          <div class="border-solid border-0 border-t border-gray-200"></div>
 
           <!-- SOLICITA -->
           <div>
@@ -372,25 +379,28 @@
               </div>
             </div>
 
-            <p-textarea formControlName="solicita" rows="4"
-              placeholder="Especifique claramente lo que solicita como resolución a su reclamo..." class="w-full"
-              styleClass="w-full">
-            </p-textarea>
-            <p class="text-xs text-gray-500 mt-2">
-              <i class="pi pi-info-circle mr-1"></i>
-              Mínimo 20 caracteres.
-            </p>
-            <p class="text-red-500 text-sm mt-1" *ngIf="isInvalid('solicita')">
-              <i class="pi pi-exclamation-circle mr-1"></i>
-              Indique su solicitud con mayor detalle.
-            </p>
+            <textarea pTextarea formControlName="solicita" rows="4" [autoResize]="true"
+              [invalid]="isInvalid('solicita')"
+              placeholder="Especifique claramente lo que solicita como resolución a su reclamo..."
+              class="w-full"></textarea>
+
+            <div class="flex justify-between">
+              <p class="text-xs text-gray-500 mt-2">
+                <i class="pi pi-info-circle mr-1"></i>
+                Mínimo 20 caracteres.
+              </p>
+              <p class="text-red-500 text-sm mt-1" *ngIf="isInvalid('solicita')">
+                <i class="pi pi-exclamation-circle mr-1"></i>
+                Indique su solicitud con mayor detalle.
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Botones de acción -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div class="bg-white rounded-xl shadow-sm border border-solid border-gray-200 p-6">
       <div class="flex flex-col sm:flex-row sm:justify-end gap-4">
         <p-button label="Limpiar Formulario" icon="pi pi-refresh" severity="secondary" [outlined]="true" size="large"
           (onClick)="limpiarFormulario()" styleClass="flex-1 sm:flex-initial">
