@@ -1,0 +1,285 @@
+<!-- Header (fuera del form) -->
+<header class="bg-slate-700 text-white p-6">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <i class="pi pi-clock text-2xl"></i>
+      <div>
+        <h1 class="text-xl font-bold tracking-wide">FORMATO DE DENUNCIA Y RECLAMO</h1>
+        <p class="text-sm text-gray-300">
+          Defensoría Universitaria - Sistema de Gestión de Reclamos
+        </p>
+      </div>
+    </div>
+    <div class="text-right">
+      <div class="text-sm">Fecha: {{ today | date:'dd/MM/yyyy' }}</div>
+      <div class="bg-red-600 px-3 py-1 rounded text-xs font-bold mt-1">
+        N° Expediente: {{ expediente }}
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="min-h-screen bg-gray-100 p-4">
+  <div class="mx-auto">
+    <!-- Form -->
+    <form [formGroup]="formularioForm" class="bg-white">
+
+      <!-- Información Institucional -->
+      <p-card class="mb-6">
+        <ng-template pTemplate="header">
+          <div class="section-header">
+            <i class="pi pi-building text-blue-600"></i>
+            <span>Información Institucional</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="grid grid-cols-1 gap-4">
+            <div>
+              <label class="field-label">
+                <i class="pi pi-filter mr-1"></i> Filial
+              </label>
+              <p-select formControlName="filial" [options]="filialOptions" placeholder="Seleccione una sede"
+                optionLabel="label" optionValue="value" [filter]="true" class="w-full"></p-select>
+              <p class="error" *ngIf="isInvalid('filial')">Seleccione una filial.</p>
+            </div>
+          </div>
+        </ng-template>
+      </p-card>
+
+      <!-- Información Personal -->
+      <p-card class="mb-6">
+        <ng-template pTemplate="header">
+          <div class="section-header">
+            <i class="pi pi-user text-blue-600"></i>
+            <span>Información Personal</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="field-label"><i class="pi pi-user mr-1"></i> Nombre</label>
+              <input pInputText formControlName="nombre" placeholder="Ingrese su nombre" class="w-full" />
+              <p class="error" *ngIf="isInvalid('nombre')">Ingrese su nombre.</p>
+            </div>
+            <div>
+              <label class="field-label"><i class="pi pi-users mr-1"></i> Apellidos</label>
+              <input pInputText formControlName="apellidos" placeholder="Ingrese sus apellidos" class="w-full" />
+              <p class="error" *ngIf="isInvalid('apellidos')">Ingrese sus apellidos.</p>
+            </div>
+            <div>
+              <label class="field-label"><i class="pi pi-id-card mr-1"></i> D.N.I o Pasaporte</label>
+              <input pInputText formControlName="documento" placeholder="12345678" class="w-full" />
+              <p class="help">Solo números para DNI (8 dígitos) o ingrese su pasaporte.</p>
+              <p class="error" *ngIf="isInvalid('documento')">Documento inválido.</p>
+            </div>
+            <div>
+              <label class="field-label"><i class="pi pi-home mr-1"></i> Domicilio</label>
+              <input pInputText formControlName="domicilio" placeholder="Ingrese su dirección" class="w-full" />
+              <p class="error" *ngIf="isInvalid('domicilio')">Ingrese su domicilio.</p>
+            </div>
+            <div>
+              <label class="field-label"><i class="pi pi-phone mr-1"></i> Teléfono</label>
+              <div class="flex">
+                <span class="bg-gray-100 border px-3 py-2 rounded-l text-gray-700 text-sm select-none">+51</span>
+                <input pInputText formControlName="telefono" placeholder="987654321" class="w-full rounded-l-none" />
+              </div>
+              <p class="help">9 dígitos.</p>
+              <p class="error" *ngIf="isInvalid('telefono')">Ingrese un teléfono válido.</p>
+            </div>
+            <div>
+              <label class="field-label"><i class="pi pi-envelope mr-1"></i> Correo electrónico para
+                notificación</label>
+              <input pInputText type="email" formControlName="email" placeholder="ejemplo@correo.com" class="w-full" />
+              <p class="error" *ngIf="isInvalid('email')">Ingrese un correo válido.</p>
+            </div>
+          </div>
+        </ng-template>
+      </p-card>
+
+      <!-- Tipo de Usuario -->
+      <p-card class="mb-6">
+        <ng-template pTemplate="header">
+          <div class="section-header">
+            <i class="pi pi-users text-blue-600"></i>
+            <span>Tipo de Usuario</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="flex items-center gap-2">
+              <p-radioButton inputId="estudiante" name="tipoUsuario" value="estudiante"
+                formControlName="tipoUsuario"></p-radioButton>
+              <label for="estudiante" class="cursor-pointer flex items-center gap-2">
+                <i class="pi pi-graduation-cap text-blue-600"></i> Estudiante
+              </label>
+            </div>
+            <div class="flex items-center gap-2">
+              <p-radioButton inputId="docente" name="tipoUsuario" value="docente"
+                formControlName="tipoUsuario"></p-radioButton>
+              <label for="docente" class="cursor-pointer flex items-center gap-2">
+                <i class="pi pi-book text-green-600"></i> Docente
+              </label>
+            </div>
+            <div class="flex items-center gap-2">
+              <p-radioButton inputId="administrativo" name="tipoUsuario" value="administrativo"
+                formControlName="tipoUsuario"></p-radioButton>
+              <label for="administrativo" class="cursor-pointer flex items-center gap-2">
+                <i class="pi pi-briefcase text-orange-600"></i> Administrativo
+              </label>
+            </div>
+            <div class="flex items-center gap-2">
+              <p-radioButton inputId="egresado" name="tipoUsuario" value="egresado"
+                formControlName="tipoUsuario"></p-radioButton>
+              <label for="egresado" class="cursor-pointer flex items-center gap-2">
+                <i class="pi pi-award text-purple-600"></i> Egresado
+              </label>
+            </div>
+          </div>
+          <p class="error" *ngIf="isInvalid('tipoUsuario')">Seleccione un tipo de usuario.</p>
+        </ng-template>
+      </p-card>
+
+      <!-- Información Académica/Laboral -->
+      <p-card class="mb-6">
+        <ng-template pTemplate="header">
+          <div class="section-header">
+            <i class="pi pi-building text-blue-600"></i>
+            <span>Información Académica/Laboral</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="grid grid-cols-1 gap-4">
+            <div>
+              <label class="field-label">
+                <i class="pi pi-home mr-1"></i>
+                Escuela (Estudiante/Docente) / Área/Servicio
+              </label>
+              <!-- p-select a TODO el ancho -->
+              <p-select formControlName="escuela" [options]="escuelaOptions"
+                placeholder="Seleccione su Escuela / Área / Servicio" optionLabel="label" optionValue="value"
+                [filter]="true" class="w-full"></p-select>
+              <p class="error" *ngIf="isInvalid('escuela')">Seleccione una opción.</p>
+            </div>
+          </div>
+        </ng-template>
+      </p-card>
+
+      <!-- Adjuntos -->
+      <p-card class="mb-6">
+        <ng-template pTemplate="header">
+          <div class="section-header">
+            <i class="pi pi-paperclip text-blue-600"></i>
+            <span>Adjuntar Evidencias</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <p class="text-sm text-gray-600 mb-3">
+            Opcional: Adjunte archivos de respaldo (PDF, JPG, PNG). Máx. 10&nbsp;MB por archivo, hasta 5 archivos.
+          </p>
+
+          <!-- FileUpload moderno con custom template -->
+          <p-fileUpload name="evidencias[]" mode="advanced" [multiple]="true" [maxFileSize]="10 * 1024 * 1024"
+            [fileLimit]="5" accept=".pdf,.jpg,.jpeg,.png" [customUpload]="true" (uploadHandler)="onUpload($event)"
+            chooseIcon="pi pi-upload" [showCancelButton]="false" [showUploadButton]="true" [auto]="false"
+            styleClass="w-full">
+            <ng-template pTemplate="content">
+              <div class="rounded-lg border-2 border-dashed border-slate-300 p-6 text-center bg-slate-50">
+                <i class="pi pi-cloud-upload text-3xl"></i>
+                <p class="mt-2 text-sm text-gray-700">
+                  Arrastre y suelte archivos aquí o haga clic en <span class="font-semibold">Subir</span>.
+                </p>
+                <p class="text-xs text-gray-500 mt-1">Formatos permitidos: PDF, JPG, PNG</p>
+              </div>
+            </ng-template>
+          </p-fileUpload>
+
+          <!-- Lista de seleccionados -->
+          <div *ngIf="selectedFiles.length" class="mt-4">
+            <div class="text-sm font-semibold mb-2 flex items-center gap-2">
+              <i class="pi pi-list"></i> Archivos seleccionados
+            </div>
+            <ul class="space-y-2">
+              <li *ngFor="let f of selectedFiles; index as i"
+                class="flex items-center justify-between bg-gray-50 border rounded p-2">
+                <div class="truncate">
+                  <i class="pi pi-file mr-2 text-slate-600"></i>
+                  <span class="truncate align-middle">{{ f.name }}</span>
+                  <span class="ml-2 text-xs text-gray-500">({{ f.size | number }} bytes)</span>
+                </div>
+                <button type="button" class="text-red-600 hover:text-red-700 text-xs font-semibold"
+                  (click)="removeSelected(i)">
+                  Quitar
+                </button>
+              </li>
+            </ul>
+          </div>
+        </ng-template>
+      </p-card>
+
+      <!-- Descripción del Reclamo -->
+      <p-card class="mb-6">
+        <ng-template pTemplate="header">
+          <div class="section-header">
+            <i class="pi pi-file-edit text-blue-600"></i>
+            <span>Descripción del Reclamo</span>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <div class="space-y-6">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <i class="pi pi-exclamation-circle text-orange-500"></i>
+                <span class="font-semibold text-gray-700">EXPONE:</span>
+              </div>
+              <p class="text-sm text-gray-600 mb-3">
+                Indique claramente los hechos que originan la denuncia o reclamación y el alcance de su pretensión.
+              </p>
+              <p-textarea formControlName="expone" rows="5" placeholder="Describa detalladamente los hechos..."
+                class="w-full"></p-textarea>
+              <p class="help">Mínimo 50 caracteres.</p>
+              <p class="error" *ngIf="isInvalid('expone')">La descripción es muy corta.</p>
+            </div>
+
+            <p-divider></p-divider>
+
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <i class="pi pi-check-circle text-green-500"></i>
+                <span class="font-semibold text-gray-700">SOLICITA:</span>
+              </div>
+              <p class="text-sm text-gray-600 mb-3">
+                Especifique claramente lo que solicita como resolución.
+              </p>
+              <p-textarea formControlName="solicita" rows="4" placeholder="Especifique lo que solicita..."
+                class="w-full"></p-textarea>
+              <p class="help">Mínimo 20 caracteres.</p>
+              <p class="error" *ngIf="isInvalid('solicita')">Indique su solicitud con mayor detalle.</p>
+            </div>
+          </div>
+        </ng-template>
+      </p-card>
+
+      <!-- Botones -->
+      <div class="flex flex-col sm:flex-row sm:justify-end gap-3 pb-6 px-3">
+        <p-button label="Limpiar" icon="pi pi-refresh" severity="secondary" [outlined]="true"
+          (onClick)="limpiarFormulario()"></p-button>
+        <p-button label="Enviar Formulario" icon="pi pi-send" severity="danger"
+          (onClick)="enviarFormulario()"></p-button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Footer (fuera del form) -->
+<footer class="bg-slate-700 text-white p-4">
+  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center text-sm gap-2">
+    <div>
+      <div class="font-semibold">Defensoría Universitaria</div>
+      <div class="text-gray-300">Sistema de Gestión de Denuncias y Reclamos</div>
+    </div>
+    <div class="text-right text-gray-300">
+      <div>Para consultas adicionales, contacte a la Defensoría Universitaria</div>
+      <div>© {{ currentYear }} - Todos los derechos reservados</div>
+    </div>
+  </div>
+</footer>

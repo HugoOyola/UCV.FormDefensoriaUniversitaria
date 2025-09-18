@@ -25,6 +25,7 @@
     "@primeng/themes": "^20.1.2",
     "ngx-spinner": "^16.0.2",
     "ngx-trilce": "^0.0.25",
+    "primeicons": "^7.0.0",
     "primeng": "^20.1.2",
     "rxjs": "~7.8.1",
     "tslib": "^2.3.0",

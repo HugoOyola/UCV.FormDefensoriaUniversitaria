@@ -9,14 +9,14 @@ export const routes: Routes = [
 		children: [
 			{
 				path: '',
-				redirectTo: 'dashboard',
+				redirectTo: 'formulario',
 				pathMatch: 'full',
 			},
 			{
-				path: 'dashboard',
+				path: 'formulario',
 				loadComponent: () =>
-					import('./page/main/components/datos-basicos/datos-basicos.component').then((m) => m.DatosBasicosComponent),
-				title: 'Libro de Reclamos - Dashboard',
+					import('./page/main/components/formulario/formulario.component').then((m) => m.FormularioComponent),
+				title: 'Formulario',
 			},
 			{
 				path: 'uikit',

@@ -17,9 +17,7 @@ export const appConfig: ApplicationConfig = {
 		provideHttpClient(withInterceptors([tokenInterceptor])),
 		provideAnimationsAsync(),
 		providePrimeNG({
-			theme: {
-				preset: Aura
-			}
+			theme: { preset: Aura, options: { darkModeSelector: '.p-dark' } },
 		}),
 	]
 };
