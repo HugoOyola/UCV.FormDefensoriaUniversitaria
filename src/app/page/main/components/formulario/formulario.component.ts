@@ -10,7 +10,9 @@ import { DividerModule } from 'primeng/divider';
 import { FileUploadModule, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { RadioButtonModule } from 'primeng/radiobutton';
 
-type Option = { label: string; value: string };
+type Option = { label: string; value: string; exp: string };
+
+type OptionEscuela = { label: string; value: string };
 
 @Component({
   selector: 'app-formulario',
@@ -36,19 +38,29 @@ export class FormularioComponent {
   // Header/Footer helpers
   today = new Date();
   currentYear = this.today.getFullYear();
-  expediente = 'EX-EONDVKMRQ';
+  expediente = '';
 
   filialOptions: Option[] = [
-    { label: 'Sede Lima Centro', value: 'lima-centro' },
-    { label: 'Sede Lima Norte', value: 'lima-norte' },
-    { label: 'Sede Lima Sur', value: 'lima-sur' },
-    { label: 'Sede Arequipa', value: 'arequipa' },
-    { label: 'Sede Cusco', value: 'cusco' },
-    { label: 'Sede Trujillo', value: 'trujillo' }
+    { label: 'UCV FILIAL ATE VITARTE', value: '6600000000', exp: 'ate' },
+    { label: 'UCV FILIAL CALLAO', value: '6700000000', exp: 'cal' },
+    { label: 'UCV FILIAL CHEPEN', value: '7100000000', exp: 'che' },
+    { label: 'UCV FILIAL CHICLAYO', value: '1000003204', exp: 'cix' },
+    { label: 'UCV FILIAL CHIMBOTE', value: '1000147917', exp: 'chi' },
+    { label: 'UCV FILIAL HUARAZ', value: '6800000000', exp: 'hua' },
+    { label: 'UCV FILIAL LIMA CENTRO', value: '7500000000', exp: 'lce' },
+    { label: 'UCV FILIAL LIMA ESTE', value: '6500000000', exp: 'les' },
+    { label: 'UCV FILIAL LIMA NORTE', value: '1000095671', exp: 'lno' },
+    { label: 'UCV FILIAL MOYOBAMBA', value: '6900000000', exp: 'moy' },
+    { label: 'UCV FILIAL PIURA', value: '1000114557', exp: 'piu' },
+    { label: 'UCV FILIAL TARAPOTO', value: '1000136996', exp: 'tar' },
+    { label: 'UCV FILIAL TRUJILLO', value: '1000098770', exp: 'tru' }
   ];
 
+  // Map para llevar correlativos por filial
+  private correlativos = new Map<string, number>();
+
   // Opciones de Escuela / Área / Servicio (ejemplo)
-  escuelaOptions: Option[] = [
+  escuelaOptions: OptionEscuela[] = [
     { label: 'Facultad de Ingeniería', value: 'fi' },
     { label: 'Facultad de Derecho', value: 'fd' },
     { label: 'Facultad de Educación', value: 'fe' },
@@ -79,15 +91,37 @@ export class FormularioComponent {
       expone: ['', [Validators.required, Validators.minLength(50)]],
       solicita: ['', [Validators.required, Validators.minLength(20)]]
     });
+
+    // Escuchar cambios en filial
+    this.formularioForm.get('filial')?.valueChanges.subscribe((filialValue) => {
+      this.generarExpediente(filialValue);
+    });
   }
 
-  // === Helpers de validación ===
+  private generarExpediente(filialValue: string) {
+    const filial = this.filialOptions.find(f => f.value === filialValue);
+    if (!filial) return;
+
+    const exp = filial.exp.toUpperCase();
+
+    // Obtener correlativo actual o inicializar en 0
+    const current = this.correlativos.get(exp) || 0;
+    const next = current + 1;
+
+    // Guardar el nuevo correlativo
+    this.correlativos.set(exp, next);
+
+    // Formatear
+    this.expediente = `EXPE-${exp}-${next.toString().padStart(4, '0')}`;
+  }
+
+  // Helpers de validación
   isInvalid(controlName: keyof typeof this.formularioForm.controls): boolean {
     const ctrl = this.formularioForm.get(controlName as string);
     return !!ctrl && ctrl.invalid && (ctrl.touched || ctrl.dirty);
   }
 
-  // === FileUpload custom ===
+  // FileUpload custom
   onUpload(event: FileUploadHandlerEvent) {
     // event.files es File[]
     const incoming = (event.files ?? []) as File[];
