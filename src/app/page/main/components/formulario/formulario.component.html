@@ -22,139 +22,12 @@
 <div class="p-6 mx-auto">
   <!-- Form -->
   <form [formGroup]="formularioForm" class="space-y-8">
-    <!-- Información Institucional -->
-    <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl">
-      <div class="px-6 py-4 border-0 border-b border-blue-200 border-solid bg-gradient-to-r from-blue-50 to-blue-100">
-        <div class="flex items-center gap-3">
-          <div class="p-2 bg-blue-600 rounded-lg">
-            <i class="text-lg text-white pi pi-building"></i>
-          </div>
-          <div>
-            <h2 class="text-lg font-semibold text-gray-800">Información Institucional</h2>
-            <p class="text-sm text-gray-600">Seleccione su sede o filial</p>
-          </div>
-        </div>
-      </div>
-      <div class="p-6">
-        <div class="grid grid-cols-1 gap-4">
-          <div>
-            <label class="block mb-2 text-sm font-medium text-gray-700">
-              <i class="mr-2 text-blue-600 pi pi-filter"></i>
-              Filial <span class="text-red-500">*</span>
-            </label>
-            <p-select formControlName="filial" [options]="filialOptions" placeholder="Seleccione una sede"
-              optionLabel="label" optionValue="value" [filter]="true" appendTo="body" [style]="{ width: '100%' }"
-              class="w-full">
-            </p-select>
-            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('filial')">
-              <i class="mr-1 pi pi-exclamation-circle"></i>
-              Seleccione una filial.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Información Personal -->
-    <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl">
-      <div
-        class="px-6 py-4 border-0 border-b border-green-200 border-solid bg-gradient-to-r from-green-50 to-green-100">
-        <div class="flex items-center gap-3">
-          <div class="p-2 bg-green-600 rounded-lg">
-            <i class="text-lg text-white pi pi-user"></i>
-          </div>
-          <div>
-            <h2 class="text-lg font-semibold text-gray-800">Información Personal</h2>
-            <p class="text-sm text-gray-600">Complete sus datos personales</p>
-          </div>
-        </div>
-      </div>
-      <div class="p-6">
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div>
-            <label class="block mb-2 text-sm font-medium text-gray-700">
-              <i class="mr-2 text-green-600 pi pi-user"></i>
-              Nombre <span class="text-red-500">*</span>
-            </label>
-            <input pInputText formControlName="nombre" placeholder="Ingrese su nombre" class="w-full" />
-            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('nombre')">
-              <i class="mr-1 pi pi-exclamation-circle"></i>
-              Ingrese su nombre.
-            </p>
-          </div>
-
-          <div>
-            <label class="block mb-2 text-sm font-medium text-gray-700">
-              <i class="mr-2 text-green-600 pi pi-users"></i>
-              Apellidos <span class="text-red-500">*</span>
-            </label>
-            <input pInputText formControlName="apellidos" placeholder="Ingrese sus apellidos" class="w-full" />
-            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('apellidos')">
-              <i class="mr-1 pi pi-exclamation-circle"></i>
-              Ingrese sus apellidos.
-            </p>
-          </div>
-
-          <div>
-            <label class="block mb-2 text-sm font-medium text-gray-700">
-              <i class="mr-2 text-green-600 pi pi-id-card"></i>
-              D.N.I o Pasaporte <span class="text-red-500">*</span>
-            </label>
-            <input pInputText formControlName="documento" placeholder="12345678" class="w-full" />
-            <p class="mt-1 text-xs text-gray-500">Solo números para DNI (8 dígitos) o ingrese su pasaporte.</p>
-            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('documento')">
-              <i class="mr-1 pi pi-exclamation-circle"></i>
-              Documento inválido.
-            </p>
-          </div>
-
-          <div>
-            <label class="block mb-2 text-sm font-medium text-gray-700">
-              <i class="mr-2 text-green-600 pi pi-home"></i>
-              Domicilio <span class="text-red-500">*</span>
-            </label>
-            <input pInputText formControlName="domicilio" placeholder="Ingrese su dirección" class="w-full" />
-            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('domicilio')">
-              <i class="mr-1 pi pi-exclamation-circle"></i>
-              Ingrese su domicilio.
-            </p>
-          </div>
-
-          <div>
-            <label class="block mb-2 text-sm font-medium text-gray-700">
-              <i class="mr-2 text-green-600 pi pi-phone"></i>
-              Teléfono <span class="text-red-500">*</span>
-            </label>
-            <input pInputText formControlName="telefono" placeholder="987654321" class="w-full rounded-lg" />
-
-            <p class="mt-1 text-xs text-gray-500">9 dígitos.</p>
-            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('telefono')">
-              <i class="mr-1 pi pi-exclamation-circle"></i>
-              Ingrese un teléfono válido.
-            </p>
-          </div>
-
-          <div>
-            <label class="block mb-2 text-sm font-medium text-gray-700">
-              <i class="mr-2 text-green-600 pi pi-envelope"></i>
-              Correo electrónico para notificación <span class="text-red-500">*</span>
-            </label>
-            <input pInputText type="email" formControlName="email" placeholder="ejemplo@correo.com" class="w-full" />
-            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('email')">
-              <i class="mr-1 pi pi-exclamation-circle"></i>
-              Ingrese un correo válido.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Tipo de Usuario -->
     <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl">
       <div
-        class="px-6 py-4 border-0 border-b border-purple-200 border-solid bg-gradient-to-r from-purple-50 to-purple-100">
+        class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
         <div class="flex items-center gap-3">
-          <div class="p-2 bg-purple-600 rounded-lg">
+          <div class="flex items-center p-2 bg-[#105282] rounded-lg">
             <i class="text-lg text-white pi pi-users"></i>
           </div>
           <div>
@@ -164,7 +37,7 @@
         </div>
       </div>
       <div class="p-6">
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-5">
           <div class="relative">
             <input type="radio" id="estudiante" name="tipoUsuario" value="estudiante" formControlName="tipoUsuario"
               class="sr-only peer">
@@ -199,9 +72,19 @@
             <input type="radio" id="egresado" name="tipoUsuario" value="egresado" formControlName="tipoUsuario"
               class="sr-only peer">
             <label for="egresado"
-              class="flex items-center gap-3 p-4 transition-all border-2 border-gray-200 border-solid rounded-lg cursor-pointer hover:border-purple-300 peer-checked:border-purple-500 peer-checked:bg-purple-50">
-              <i class="text-xl text-blue-600 pi pi-graduation-cap"></i>
+              class="flex items-center gap-3 p-4 transition-all border-2 border-gray-200 border-solid rounded-lg cursor-pointer hover:border-rose-300 peer-checked:border-rose-500 peer-checked:bg-rose-50">
+              <i class="text-xl text-rose-600 pi pi-user-edit"></i>
               <span class="font-medium text-gray-700">Egresado</span>
+            </label>
+          </div>
+
+          <div class="relative">
+            <input type="radio" id="graduado" name="tipoUsuario" value="graduado" formControlName="tipoUsuario"
+              class="sr-only peer">
+            <label for="graduado"
+              class="flex items-center gap-3 p-4 transition-all border-2 border-gray-200 border-solid rounded-lg cursor-pointer hover:border-purple-300 peer-checked:border-purple-500 peer-checked:bg-purple-50">
+              <i class="text-xl text-purple-600 pi pi-graduation-cap"></i>
+              <span class="font-medium text-gray-700">Graduado</span>
             </label>
           </div>
         </div>
@@ -212,17 +95,16 @@
       </div>
     </div>
 
-    <!-- Información Académica/Laboral -->
+    <!-- Información Institucional -->
     <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl">
-      <div
-        class="px-6 py-4 border-0 border-b border-indigo-200 border-solid bg-gradient-to-r from-indigo-50 to-indigo-100">
+      <div class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
         <div class="flex items-center gap-3">
-          <div class="p-2 bg-indigo-600 rounded-lg">
+          <div class="flex items-center p-2 bg-[#105282] rounded-lg">
             <i class="text-lg text-white pi pi-building"></i>
           </div>
           <div>
-            <h2 class="text-lg font-semibold text-gray-800">Información Académica/Laboral</h2>
-            <p class="text-sm text-gray-600">Especifique su área o escuela</p>
+            <h2 class="text-lg font-semibold text-gray-800">Información Institucional</h2>
+            <p class="text-sm text-gray-600">Seleccione su sede o filial</p>
           </div>
         </div>
       </div>
@@ -230,12 +112,215 @@
         <div class="grid grid-cols-1 gap-4">
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-700">
-              <i class="mr-2 text-indigo-600 pi pi-home"></i>
-              Escuela (Estudiante/Docente) / Área/Servicio <span class="text-red-500">*</span>
+              <i class="mr-2 text-blue-600 pi pi-filter"></i>
+              Filial <span class="text-red-500">*</span>
             </label>
-            <p-select formControlName="escuela" [options]="escuelaOptions"
-              placeholder="Seleccione su Escuela / Área / Servicio" optionLabel="label" optionValue="value"
-              [filter]="true" appendTo="body" [style]="{ width: '100%' }" class="w-full">
+            <p-select formControlName="filial" [options]="filialOptions" placeholder="Seleccione una sede"
+              optionLabel="label" optionValue="value" [filter]="true" appendTo="body" [style]="{ width: '100%' }"
+              class="w-full">
+            </p-select>
+            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('filial')">
+              <i class="mr-1 pi pi-exclamation-circle"></i>
+              Seleccione una filial.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información Personal -->
+    <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl">
+      <div
+        class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center p-2 bg-[#105282] rounded-lg">
+            <i class="text-lg text-white pi pi-user"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold text-gray-800">Información Personal</h2>
+            <p class="text-sm text-gray-600">Complete sus datos personales</p>
+          </div>
+        </div>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-700">
+              <i class="mr-2 text-blue-600 pi pi-user"></i>
+              Nombre <span class="text-red-500">*</span>
+            </label>
+            <input pInputText formControlName="nombre" placeholder="Ingrese su nombre" class="w-full" />
+            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('nombre')">
+              <i class="mr-1 pi pi-exclamation-circle"></i>
+              Ingrese su nombre.
+            </p>
+          </div>
+
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-700">
+              <i class="mr-2 text-blue-600 pi pi-users"></i>
+              Apellidos <span class="text-red-500">*</span>
+            </label>
+            <input pInputText formControlName="apellidos" placeholder="Ingrese sus apellidos" class="w-full" />
+            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('apellidos')">
+              <i class="mr-1 pi pi-exclamation-circle"></i>
+              Ingrese sus apellidos.
+            </p>
+          </div>
+
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-700">
+              <i class="mr-2 text-blue-600 pi pi-id-card"></i>
+              D.N.I o Pasaporte <span class="text-red-500">*</span>
+            </label>
+            <input pInputText formControlName="documento" placeholder="12345678" class="w-full" />
+            <p class="mt-1 text-xs text-gray-500">Solo números para DNI (8 dígitos) o ingrese su pasaporte.</p>
+            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('documento')">
+              <i class="mr-1 pi pi-exclamation-circle"></i>
+              Documento inválido.
+            </p>
+          </div>
+
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-700">
+              <i class="mr-2 text-blue-600 pi pi-briefcase"></i>
+              Escuela profesional <span class="text-red-500">*</span>
+            </label>
+            <p-select formControlName="escuelaProfesional" [options]="escuelaOptions"
+              placeholder="Seleccione su escuela profesional" optionLabel="label" optionValue="value" [filter]="true"
+              appendTo="body" [style]="{ width: '100%' }" class="w-full">
+            </p-select>
+            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('escuelaProfesional')">
+              <i class="mr-1 pi pi-exclamation-circle"></i>
+              Seleccione su escuela profesional.
+            </p>
+          </div>
+
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-700">
+              <i class="mr-2 text-blue-600 pi pi-sliders-h"></i>
+              Modalidad <span class="text-red-500">*</span>
+            </label>
+            <p-select formControlName="modalidad" [options]="modalidadOptions" placeholder="Seleccione la modalidad"
+              optionLabel="label" optionValue="value" appendTo="body" [style]="{ width: '100%' }" class="w-full">
+            </p-select>
+            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('modalidad')">
+              <i class="mr-1 pi pi-exclamation-circle"></i>
+              Seleccione la modalidad.
+            </p>
+          </div>
+
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-700">
+              <i class="mr-2 text-blue-600 pi pi-home"></i>
+              Domicilio <span class="text-red-500">*</span>
+            </label>
+            <input pInputText formControlName="domicilio" placeholder="Ingrese su dirección" class="w-full" />
+            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('domicilio')">
+              <i class="mr-1 pi pi-exclamation-circle"></i>
+              Ingrese su domicilio.
+            </p>
+          </div>
+
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-700">
+              <i class="mr-2 text-blue-600 pi pi-phone"></i>
+              Teléfono <span class="text-red-500">*</span>
+            </label>
+            <input pInputText formControlName="telefono" placeholder="987654321" class="w-full rounded-lg" />
+
+            <p class="mt-1 text-xs text-gray-500">9 dígitos.</p>
+            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('telefono')">
+              <i class="mr-1 pi pi-exclamation-circle"></i>
+              Ingrese un teléfono válido.
+            </p>
+          </div>
+
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-700">
+              <i class="mr-2 text-blue-600 pi pi-envelope"></i>
+              Correo electrónico para notificación <span class="text-red-500">*</span>
+            </label>
+            <input pInputText type="email" formControlName="email" placeholder="ejemplo@correo.com" class="w-full" />
+            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('email')">
+              <i class="mr-1 pi pi-exclamation-circle"></i>
+              Ingrese un correo válido.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-2 mx-6 mb-6 p-4 rounded-lg border border-solid border-amber-200 bg-amber-50">
+        <div class="flex items-center gap-3">
+          <p-checkbox binary="true" formControlName="isApoderado" inputId="isApoderado"></p-checkbox>
+          <label for="isApoderado" class="text-sm font-medium text-amber-900">
+            Soy padre de familia o apoderado y registraré mis datos
+          </label>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 mt-4 md:grid-cols-3" *ngIf="formularioForm.get('isApoderado')?.value">
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-700">
+              <i class="mr-2 text-amber-600 pi pi-user"></i>
+              Apellidos <span class="text-red-500">*</span>
+            </label>
+            <input pInputText formControlName="apoderadoApellidos" placeholder="Apellidos del apoderado" class="w-full" />
+            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('apoderadoApellidos')">
+              <i class="mr-1 pi pi-exclamation-circle"></i> Campo obligatorio.
+            </p>
+          </div>
+
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-700">
+              <i class="mr-2 text-amber-600 pi pi-user"></i>
+              Nombres <span class="text-red-500">*</span>
+            </label>
+            <input pInputText formControlName="apoderadoNombres" placeholder="Nombres del apoderado" class="w-full" />
+            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('apoderadoNombres')">
+              <i class="mr-1 pi pi-exclamation-circle"></i> Campo obligatorio.
+            </p>
+          </div>
+
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-700">
+              <i class="mr-2 text-amber-600 pi pi-envelope"></i>
+              Email <span class="text-red-500">*</span>
+            </label>
+            <input pInputText type="email" formControlName="apoderadoEmail" placeholder="correo@dominio.com"
+              class="w-full" />
+            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('apoderadoEmail')">
+              <i class="mr-1 pi pi-exclamation-circle"></i> Ingrese un correo válido.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información Laboral -->
+    <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl"
+      *ngIf="formularioForm.get('tipoUsuario')?.value === 'administrativo'">
+      <div
+        class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center p-2 bg-[#105282] rounded-lg">
+            <i class="text-lg text-white pi pi-building"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold text-gray-800">Información Laboral</h2>
+            <p class="text-sm text-gray-600">Especifique su área</p>
+          </div>
+        </div>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-1 gap-4">
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-700">
+              <i class="mr-2 text-blue-600 pi pi-home"></i>
+              Área/Servicio <span class="text-red-500">*</span>
+            </label>
+            <p-select formControlName="escuela" [options]="escuelaOptions" placeholder="Seleccione su Área / Servicio"
+              optionLabel="label" optionValue="value" [filter]="true" appendTo="body" [style]="{ width: '100%' }"
+              class="w-full">
             </p-select>
 
             <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('escuela')">
@@ -247,11 +332,166 @@
       </div>
     </div>
 
+    <!-- ¿Se ingresó a otra área? -->
+    <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl">
+      <div
+        class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center p-2 bg-[#105282] rounded-lg">
+            <i class="text-lg text-white pi pi-inbox"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold text-gray-800">¿Este requerimiento se ingresó a otra área?</h2>
+            <p class="text-sm text-gray-600">Seleccione al menos una opción</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <label class="flex items-center gap-3">
+            <p-checkbox formControlName="libro" [binary]="true" inputId="oa-libro"
+              [formControl]="$any(formularioForm.get('otraArea.libro'))"></p-checkbox>
+            <span for="oa-libro">Libro de Reclamaciones</span>
+          </label>
+
+          <label class="flex items-center gap-3">
+            <p-checkbox [formControl]="$any(formularioForm.get('otraArea.tribunal'))" [binary]="true"
+              inputId="oa-tribunal"></p-checkbox>
+            <span for="oa-tribunal">Tribunal de Honor</span>
+          </label>
+
+          <label class="flex items-center gap-3">
+            <p-checkbox [formControl]="$any(formularioForm.get('otraArea.comision'))" [binary]="true"
+              inputId="oa-comision"></p-checkbox>
+            <span for="oa-comision">Comisión de Hostigamiento</span>
+          </label>
+
+          <label class="flex items-center gap-3">
+            <p-checkbox [formControl]="$any(formularioForm.get('otraArea.direccion'))" [binary]="true"
+              inputId="oa-direccion"></p-checkbox>
+            <span for="oa-direccion">Dirección General</span>
+          </label>
+
+          <label class="flex items-center gap-3">
+            <p-checkbox [formControl]="$any(formularioForm.get('otraArea.secretaria'))" [binary]="true"
+              inputId="oa-secretaria"></p-checkbox>
+            <span for="oa-secretaria">Secretaría General</span>
+          </label>
+
+          <label class="flex items-center gap-3">
+            <p-checkbox [formControl]="$any(formularioForm.get('otraArea.cap'))" [binary]="true"
+              inputId="oa-cap"></p-checkbox>
+            <span for="oa-cap">Centro de Atención Personalizada</span>
+          </label>
+
+          <div class="md:col-span-2">
+            <label class="flex items-center gap-3">
+              <p-checkbox [formControl]="$any(formularioForm.get('otraArea.otro'))" [binary]="true"
+                inputId="oa-otro"></p-checkbox>
+              <span for="oa-otro">Otro <span class="text-gray-500 text-sm">(especifique)</span></span>
+            </label>
+
+            <div class="mt-2" *ngIf="formularioForm.get('otraArea')?.value?.otro">
+              <input pInputText formControlName="otraAreaOtro" placeholder="Especifique el área" class="w-full" />
+              <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('otraAreaOtro')">
+                <i class="mr-1 pi pi-exclamation-circle"></i> Este campo es obligatorio cuando selecciona “Otro”.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-3 text-sm text-red-500"
+          *ngIf="formularioForm.get('otraArea')?.errors?.['ningunaSeleccionada'] && (formularioForm.get('otraArea')?.touched || formularioForm.get('otraArea')?.dirty)">
+          <i class="mr-1 pi pi-exclamation-circle"></i>
+          Debe seleccionar al menos una opción.
+        </p>
+      </div>
+    </div>
+
+    <!-- Descripción del Reclamo -->
+    <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl">
+      <div class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center p-2 bg-[#105282] rounded-lg">
+            <i class="text-lg text-white pi pi-file-edit"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold text-gray-800">Descripción del Reclamo</h2>
+            <p class="text-sm text-gray-600">Detalle su denuncia o reclamación</p>
+          </div>
+        </div>
+      </div>
+      <div class="p-6">
+        <div class="space-y-8">
+          <!-- EXPONE -->
+          <div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="flex items-center p-2 bg-rose-100 rounded-lg">
+                <i class="text-lg text-rose-600 pi pi-exclamation-circle"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-800">EXPONE:</h3>
+                <p class="text-sm text-gray-600">Describa los hechos que originan su reclamo</p>
+              </div>
+            </div>
+
+            <textarea pTextarea formControlName="expone" rows="6" [autoResize]="true" [invalid]="isInvalid('expone')"
+              placeholder="Describa detalladamente los hechos que originan la denuncia o reclamación y el alcance de su pretensión..."
+              class="w-full"></textarea>
+
+            <div class="flex justify-between">
+              <p class="mt-2 text-xs text-gray-500">
+                <i class="mr-1 pi pi-info-circle"></i>
+                Mínimo 50 caracteres.
+              </p>
+              <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('expone')">
+                <i class="mr-1 pi pi-exclamation-circle"></i>
+                La descripción es muy corta.
+              </p>
+            </div>
+          </div>
+
+          <!-- Divisor -->
+          <div class="border-0 border-t border-gray-200 border-solid"></div>
+
+          <!-- SOLICITA -->
+          <div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="flex items-center p-2 bg-green-100 rounded-lg">
+                <i class="text-lg text-green-600 pi pi-check-circle"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-800">SOLICITA:</h3>
+                <p class="text-sm text-gray-600">Especifique qué solicita como resolución</p>
+              </div>
+            </div>
+
+            <textarea pTextarea formControlName="solicita" rows="4" [autoResize]="true"
+              [invalid]="isInvalid('solicita')"
+              placeholder="Especifique claramente lo que solicita como resolución a su reclamo..."
+              class="w-full"></textarea>
+
+            <div class="flex justify-between">
+              <p class="mt-2 text-xs text-gray-500">
+                <i class="mr-1 pi pi-info-circle"></i>
+                Mínimo 20 caracteres.
+              </p>
+              <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('solicita')">
+                <i class="mr-1 pi pi-exclamation-circle"></i>
+                Indique su solicitud con mayor detalle.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Adjuntos -->
     <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl">
-      <div class="px-6 py-4 border-0 border-b border-teal-200 border-solid bg-gradient-to-r from-teal-50 to-teal-100">
+      <div class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
         <div class="flex items-center gap-3">
-          <div class="p-2 bg-teal-600 rounded-lg">
+          <div class="flex items-center p-2 bg-[#105282] rounded-lg">
             <i class="text-lg text-white pi pi-paperclip"></i>
           </div>
           <div>
@@ -261,12 +501,12 @@
         </div>
       </div>
       <div class="p-6">
-        <div class="p-4 mb-4 border border-blue-200 border-solid rounded-lg bg-blue-50">
+        <div class="p-4 mb-4 border border-yellow-200 border-solid rounded-lg bg-yellow-50">
           <div class="flex items-start gap-3">
-            <i class="pi pi-info-circle text-blue-600 text-lg mt-0.5"></i>
-            <div class="text-sm text-blue-800">
+            <i class="pi pi-info-circle text-yellow-600 text-lg mt-0.5"></i>
+            <div class="text-sm text-yellow-800">
               <p class="mb-1 font-medium">Información sobre archivos:</p>
-              <ul class="space-y-1 text-blue-700">
+              <ul class="space-y-1 text-yellow-700">
                 <li>• Formatos permitidos: PDF, JPG, JPEG, PNG</li>
                 <li>• Tamaño máximo: 10 MB por archivo</li>
                 <li>• Límite: hasta 5 archivos</li>
@@ -315,84 +555,6 @@
                 <i class="mr-1 pi pi-times"></i>
                 Quitar
               </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Descripción del Reclamo -->
-    <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl">
-      <div class="px-6 py-4 border-0 border-b border-red-200 border-solid bg-gradient-to-r from-red-50 to-red-100">
-        <div class="flex items-center gap-3">
-          <div class="p-2 bg-red-600 rounded-lg">
-            <i class="text-lg text-white pi pi-file-edit"></i>
-          </div>
-          <div>
-            <h2 class="text-lg font-semibold text-gray-800">Descripción del Reclamo</h2>
-            <p class="text-sm text-gray-600">Detalle su denuncia o reclamación</p>
-          </div>
-        </div>
-      </div>
-      <div class="p-6">
-        <div class="space-y-8">
-          <!-- EXPONE -->
-          <div>
-            <div class="flex items-center gap-3 mb-3">
-              <div class="p-2 bg-orange-100 rounded-lg">
-                <i class="text-lg text-orange-600 pi pi-exclamation-circle"></i>
-              </div>
-              <div>
-                <h3 class="text-lg font-semibold text-gray-800">EXPONE:</h3>
-                <p class="text-sm text-gray-600">Describa los hechos que originan su reclamo</p>
-              </div>
-            </div>
-
-            <textarea pTextarea formControlName="expone" rows="6" [autoResize]="true" [invalid]="isInvalid('expone')"
-              placeholder="Describa detalladamente los hechos que originan la denuncia o reclamación y el alcance de su pretensión..."
-              class="w-full"></textarea>
-
-            <div class="flex justify-between">
-              <p class="mt-2 text-xs text-gray-500">
-                <i class="mr-1 pi pi-info-circle"></i>
-                Mínimo 50 caracteres.
-              </p>
-              <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('expone')">
-                <i class="mr-1 pi pi-exclamation-circle"></i>
-                La descripción es muy corta.
-              </p>
-            </div>
-          </div>
-
-          <!-- Divisor -->
-          <div class="border-0 border-t border-gray-200 border-solid"></div>
-
-          <!-- SOLICITA -->
-          <div>
-            <div class="flex items-center gap-3 mb-3">
-              <div class="p-2 bg-green-100 rounded-lg">
-                <i class="text-lg text-green-600 pi pi-check-circle"></i>
-              </div>
-              <div>
-                <h3 class="text-lg font-semibold text-gray-800">SOLICITA:</h3>
-                <p class="text-sm text-gray-600">Especifique qué solicita como resolución</p>
-              </div>
-            </div>
-
-            <textarea pTextarea formControlName="solicita" rows="4" [autoResize]="true"
-              [invalid]="isInvalid('solicita')"
-              placeholder="Especifique claramente lo que solicita como resolución a su reclamo..."
-              class="w-full"></textarea>
-
-            <div class="flex justify-between">
-              <p class="mt-2 text-xs text-gray-500">
-                <i class="mr-1 pi pi-info-circle"></i>
-                Mínimo 20 caracteres.
-              </p>
-              <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('solicita')">
-                <i class="mr-1 pi pi-exclamation-circle"></i>
-                Indique su solicitud con mayor detalle.
-              </p>
             </div>
           </div>
         </div>
