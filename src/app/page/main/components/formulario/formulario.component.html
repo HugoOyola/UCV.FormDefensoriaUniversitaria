@@ -115,10 +115,14 @@
               <i class="mr-2 text-blue-600 pi pi-filter"></i>
               Filial <span class="text-red-500">*</span>
             </label>
-            <p-select formControlName="filial" [options]="filialOptions" placeholder="Seleccione una sede"
-              optionLabel="label" optionValue="value" [filter]="true" appendTo="body" [style]="{ width: '100%' }"
-              class="w-full">
-            </p-select>
+
+            <app-select-filiales
+              placeholder="Seleccione su Campus"
+              [disabled]="false"
+              [selectedValue]="filialSeleccionada"
+              (onSelectionChange)="onFilialSeleccionada($event)">
+            </app-select-filiales>
+
             <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('filial')">
               <i class="mr-1 pi pi-exclamation-circle"></i>
               Seleccione una filial.
@@ -147,7 +151,7 @@
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-700">
               <i class="mr-2 text-blue-600 pi pi-user"></i>
-              Nombre <span class="text-red-500">*</span>
+              Nombres <span class="text-red-500">*</span>
             </label>
             <input pInputText formControlName="nombre" placeholder="Ingrese su nombre" class="w-full" />
             <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('nombre')">
@@ -250,7 +254,7 @@
         </div>
       </div>
 
-      <div class="mt-2 mx-6 mb-6 p-4 rounded-lg border border-solid border-amber-200 bg-amber-50">
+      <div class="p-4 mx-6 mt-2 mb-6 border border-solid rounded-lg border-amber-200 bg-amber-50">
         <div class="flex items-center gap-3">
           <p-checkbox binary="true" formControlName="isApoderado" inputId="isApoderado"></p-checkbox>
           <label for="isApoderado" class="text-sm font-medium text-amber-900">
@@ -389,7 +393,7 @@
             <label class="flex items-center gap-3">
               <p-checkbox [formControl]="$any(formularioForm.get('otraArea.otro'))" [binary]="true"
                 inputId="oa-otro"></p-checkbox>
-              <span for="oa-otro">Otro <span class="text-gray-500 text-sm">(especifique)</span></span>
+              <span for="oa-otro">Otro <span class="text-sm text-gray-500">(especifique)</span></span>
             </label>
 
             <div class="mt-2" *ngIf="formularioForm.get('otraArea')?.value?.otro">
@@ -427,7 +431,7 @@
           <!-- EXPONE -->
           <div>
             <div class="flex items-center gap-3 mb-3">
-              <div class="flex items-center p-2 bg-rose-100 rounded-lg">
+              <div class="flex items-center p-2 rounded-lg bg-rose-100">
                 <i class="text-lg text-rose-600 pi pi-exclamation-circle"></i>
               </div>
               <div>

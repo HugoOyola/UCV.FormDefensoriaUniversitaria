@@ -10,8 +10,9 @@ import { DividerModule } from 'primeng/divider';
 import { FileUploadModule, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
+import { SelectFilialesComponent } from '../../../../core/shared/components/select-filiales/select-filiales.component';
+import { CampusDU } from '../../interface/campus.interface';
 
-type Option = { label: string; value: string; exp: string };
 type OptionEscuela = { label: string; value: string };
 type OptionModalidad = { label: string; value: 'presencial' | 'semipresencial' | 'virtual' };
 
@@ -29,7 +30,8 @@ type OptionModalidad = { label: string; value: 'presencial' | 'semipresencial' |
     DividerModule,
     FileUploadModule,
     RadioButtonModule,
-    CheckboxModule
+    CheckboxModule,
+    SelectFilialesComponent
   ],
   templateUrl: './formulario.component.html',
   styleUrls: ['./formulario.component.scss']
@@ -40,22 +42,6 @@ export class FormularioComponent {
   today = new Date();
   currentYear = this.today.getFullYear();
   expediente = '';
-
-  filialOptions: Option[] = [
-    { label: 'UCV FILIAL ATE VITARTE', value: '6600000000', exp: 'ate' },
-    { label: 'UCV FILIAL CALLAO', value: '6700000000', exp: 'cal' },
-    { label: 'UCV FILIAL CHEPEN', value: '7100000000', exp: 'che' },
-    { label: 'UCV FILIAL CHICLAYO', value: '1000003204', exp: 'cix' },
-    { label: 'UCV FILIAL CHIMBOTE', value: '1000147917', exp: 'chi' },
-    { label: 'UCV FILIAL HUARAZ', value: '6800000000', exp: 'hua' },
-    { label: 'UCV FILIAL LIMA CENTRO', value: '7500000000', exp: 'lce' },
-    { label: 'UCV FILIAL LIMA ESTE', value: '6500000000', exp: 'les' },
-    { label: 'UCV FILIAL LIMA NORTE', value: '1000095671', exp: 'lno' },
-    { label: 'UCV FILIAL MOYOBAMBA', value: '6900000000', exp: 'moy' },
-    { label: 'UCV FILIAL PIURA', value: '1000114557', exp: 'piu' },
-    { label: 'UCV FILIAL TARAPOTO', value: '1000136996', exp: 'tar' },
-    { label: 'UCV FILIAL TRUJILLO', value: '1000098770', exp: 'tru' }
-  ];
 
   private correlativos = new Map<string, number>();
 
@@ -76,6 +62,7 @@ export class FormularioComponent {
 
   selectedFiles: File[] = [];
   submitting = signal(false);
+  filialSeleccionada: CampusDU | null = null;
 
   constructor(private fb: FormBuilder) {
     this.formularioForm = this.fb.group({
@@ -120,10 +107,7 @@ export class FormularioComponent {
       otraAreaOtro: ['']
     });
 
-    // Reglas reactivas
-    this.formularioForm.get('filial')?.valueChanges.subscribe((filialValue) => {
-      this.generarExpediente(filialValue);
-    });
+    // Reglas reactivas - Ya no necesitamos este subscribe ya que manejamos la filial de otra manera
 
     this.formularioForm.get('tipoUsuario')?.valueChanges.subscribe(() => {
       this.actualizarValidadoresSegunTipoUsuario();
@@ -201,14 +185,25 @@ export class FormularioComponent {
   }
 
   // === Helpers ===
-  private generarExpediente(filialValue: string) {
-    const filial = this.filialOptions.find(f => f.value === filialValue);
-    if (!filial) return;
-    const exp = filial.exp.toUpperCase();
+  private generarExpediente(filial: CampusDU | null) {
+    if (!filial) {
+      this.expediente = '';
+      return;
+    }
+
+    // Generar código de expediente basado en pS_ESTABID
+    const exp = filial.pS_ESTABID.toUpperCase();
     const current = this.correlativos.get(exp) || 0;
     const next = current + 1;
     this.correlativos.set(exp, next);
     this.expediente = `EXPE-${exp}-${next.toString().padStart(4, '0')}`;
+  }
+
+  // Método para manejar la selección de filial
+  onFilialSeleccionada(filial: CampusDU | null): void {
+    this.filialSeleccionada = filial;
+    this.formularioForm.patchValue({ filial: filial?.cperjuridica || '' });
+    this.generarExpediente(filial);
   }
 
   isInvalid(controlName: keyof typeof this.formularioForm.controls): boolean {

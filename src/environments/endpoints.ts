@@ -6,4 +6,9 @@ export const routes = {
 			Principal_ObtenerDatosPersonales: 'Principal/ObtenerDatosPersonales',
 		},
 	},
+	DefensoriaUniversitaria: {
+		endpoints: {
+			Du_CampusDU: 'DUSevicioWeb/CampusDU',
+		}
+	}
 };
