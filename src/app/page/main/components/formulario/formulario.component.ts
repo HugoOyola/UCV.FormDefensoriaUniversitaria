@@ -313,9 +313,14 @@ export class FormularioComponent {
       evidencias: this.selectedFiles.map(f => ({ name: f.name, size: f.size, type: f.type }))
     };
 
+    // Mostrar en consola los datos completos que se envían
+    console.log('=== DATOS DEL FORMULARIO ENVIADOS ===');
+    console.log(JSON.stringify(payload, null, 2));
+    // También puedes ver el objeto plano:
+    console.log('Objeto plano:', payload);
+
     try {
       this.submitting.set(true);
-      console.log('Formulario válido. Payload a enviar:', payload);
       alert('Formulario enviado correctamente');
       this.limpiarFormulario();
     } catch (e) {

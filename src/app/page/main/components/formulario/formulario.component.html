@@ -39,7 +39,7 @@
       <div class="p-6">
         <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-5">
           <div class="relative">
-            <input type="radio" id="estudiante" name="tipoUsuario" value="estudiante" formControlName="tipoUsuario"
+            <input type="radio" id="estudiante" name="tipoUsuario" value="13" formControlName="tipoUsuario"
               class="sr-only peer">
             <label for="estudiante"
               class="flex items-center gap-3 p-4 transition-all border-2 border-gray-200 border-solid rounded-lg cursor-pointer hover:border-blue-300 peer-checked:border-blue-500 peer-checked:bg-blue-50">
@@ -49,7 +49,7 @@
           </div>
 
           <div class="relative">
-            <input type="radio" id="docente" name="tipoUsuario" value="docente" formControlName="tipoUsuario"
+            <input type="radio" id="docente" name="tipoUsuario" value="12" formControlName="tipoUsuario"
               class="sr-only peer">
             <label for="docente"
               class="flex items-center gap-3 p-4 transition-all border-2 border-gray-200 border-solid rounded-lg cursor-pointer hover:border-green-300 peer-checked:border-green-500 peer-checked:bg-green-50">
@@ -59,7 +59,7 @@
           </div>
 
           <div class="relative">
-            <input type="radio" id="administrativo" name="tipoUsuario" value="administrativo"
+            <input type="radio" id="administrativo" name="tipoUsuario" value="21"
               formControlName="tipoUsuario" class="sr-only peer">
             <label for="administrativo"
               class="flex items-center gap-3 p-4 transition-all border-2 border-gray-200 border-solid rounded-lg cursor-pointer hover:border-orange-300 peer-checked:border-orange-500 peer-checked:bg-orange-50">
@@ -69,7 +69,7 @@
           </div>
 
           <div class="relative">
-            <input type="radio" id="egresado" name="tipoUsuario" value="egresado" formControlName="tipoUsuario"
+            <input type="radio" id="egresado" name="tipoUsuario" value="14" formControlName="tipoUsuario"
               class="sr-only peer">
             <label for="egresado"
               class="flex items-center gap-3 p-4 transition-all border-2 border-gray-200 border-solid rounded-lg cursor-pointer hover:border-rose-300 peer-checked:border-rose-500 peer-checked:bg-rose-50">
@@ -79,7 +79,7 @@
           </div>
 
           <div class="relative">
-            <input type="radio" id="graduado" name="tipoUsuario" value="graduado" formControlName="tipoUsuario"
+            <input type="radio" id="graduado" name="tipoUsuario" value="72" formControlName="tipoUsuario"
               class="sr-only peer">
             <label for="graduado"
               class="flex items-center gap-3 p-4 transition-all border-2 border-gray-200 border-solid rounded-lg cursor-pointer hover:border-purple-300 peer-checked:border-purple-500 peer-checked:bg-purple-50">
@@ -196,7 +196,7 @@
             </p-select>
 
             <!-- Mensaje cuando no hay filial seleccionada -->
-            <div *ngIf="!hasFilialSelected" class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div *ngIf="!hasFilialSelected" class="p-3 mt-2 border border-blue-200 rounded-lg bg-blue-50">
               <div class="flex items-center gap-2">
                 <i class="text-blue-600 pi pi-info-circle"></i>
                 <span class="text-sm text-blue-800">Seleccione primero una filial para ver las escuelas profesionales disponibles</span>
@@ -204,7 +204,7 @@
             </div>
 
             <!-- Mensaje cuando no hay opciones disponibles -->
-            <div *ngIf="hasFilialSelected && escuelaOptions().length === 0" class="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div *ngIf="hasFilialSelected && escuelaOptions().length === 0" class="p-3 mt-2 border border-yellow-200 rounded-lg bg-yellow-50">
               <div class="flex items-center gap-2">
                 <i class="text-yellow-600 pi pi-exclamation-triangle"></i>
                 <span class="text-sm text-yellow-800">No hay escuelas profesionales disponibles para esta filial</span>
@@ -344,7 +344,7 @@
             </p-select>
 
             <!-- Mensaje cuando no hay filial seleccionada -->
-            <div *ngIf="!hasFilialSelected" class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div *ngIf="!hasFilialSelected" class="p-3 mt-2 border border-blue-200 rounded-lg bg-blue-50">
               <div class="flex items-center gap-2">
                 <i class="text-blue-600 pi pi-info-circle"></i>
                 <span class="text-sm text-blue-800">Seleccione primero una filial para ver las áreas/servicios disponibles</span>
@@ -352,7 +352,7 @@
             </div>
 
             <!-- Mensaje cuando no hay opciones disponibles -->
-            <div *ngIf="hasFilialSelected && escuelaOptions().length === 0" class="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <div *ngIf="hasFilialSelected && escuelaOptions().length === 0" class="p-3 mt-2 border border-yellow-200 rounded-lg bg-yellow-50">
               <div class="flex items-center gap-2">
                 <i class="text-yellow-600 pi pi-exclamation-triangle"></i>
                 <span class="text-sm text-yellow-800">No hay áreas/servicios disponibles para esta filial</span>

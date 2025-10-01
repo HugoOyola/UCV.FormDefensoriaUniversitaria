@@ -24,7 +24,7 @@ export class DefensoriaUniversitariaService extends GlobalService {
    */
   post_CampusDU(): Observable<HttpResponse<ResponseResultLst<CampusDU>>> {
     const url = this.ApiDefensoriaUniversitaria.url + this.ApiDefensoriaUniversitaria.endpoints.Du_CampusDU;
-    return this._http.post<ResponseResultLst<CampusDU>>(url, {}, {
+    return this._http.get<ResponseResultLst<CampusDU>>(url, {
       headers: this.headers_a_json,
       observe: 'response',
     });
