@@ -9,6 +9,8 @@ export const routes = {
 	DefensoriaUniversitaria: {
 		endpoints: {
 			Du_CampusDU: 'DUSevicioWeb/CampusDU',
+			Du_NumeroExpedienteDU: 'DUSevicioWeb/NumeroExpedienteDU',
+			Du_DepartamentosDU: 'DUSevicioWeb/DepartamentosDU',
 		}
 	}
 };

@@ -11,6 +11,7 @@ import { FileUploadModule, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SelectFilialesComponent } from '../../../../core/shared/components/select-filiales/select-filiales.component';
+import { DefensoriaUniversitariaService } from '../../services/defensoria-universitaria.service';
 import { CampusDU } from '../../interface/campus.interface';
 
 type OptionEscuela = { label: string; value: string };
@@ -45,14 +46,8 @@ export class FormularioComponent {
 
   private correlativos = new Map<string, number>();
 
-  escuelaOptions: OptionEscuela[] = [
-    { label: 'Administración', value: 'adm' },
-    { label: 'Ingeniería de Sistemas', value: 'sistemas' },
-    { label: 'Derecho', value: 'derecho' },
-    { label: 'Educación', value: 'educacion' },
-    { label: 'Contabilidad', value: 'conta' },
-    { label: 'Otro', value: 'otro' }
-  ];
+  // Opciones dinámicas para áreas/departamentos (inicia vacío)
+  escuelaOptions = signal<OptionEscuela[]>([]);
 
   modalidadOptions: OptionModalidad[] = [
     { label: 'Presencial', value: 'presencial' },
@@ -64,7 +59,12 @@ export class FormularioComponent {
   submitting = signal(false);
   filialSeleccionada: CampusDU | null = null;
 
-  constructor(private fb: FormBuilder) {
+  // Propiedad para controlar mensajes informativos
+  get hasFilialSelected(): boolean {
+    return this.filialSeleccionada !== null;
+  }
+
+  constructor(private fb: FormBuilder, private defensoriaService: DefensoriaUniversitariaService) {
     this.formularioForm = this.fb.group({
       filial: ['', Validators.required],
 
@@ -185,25 +185,75 @@ export class FormularioComponent {
   }
 
   // === Helpers ===
-  private generarExpediente(filial: CampusDU | null) {
-    if (!filial) {
-      this.expediente = '';
-      return;
-    }
-
-    // Generar código de expediente basado en pS_ESTABID
-    const exp = filial.pS_ESTABID.toUpperCase();
-    const current = this.correlativos.get(exp) || 0;
-    const next = current + 1;
-    this.correlativos.set(exp, next);
-    this.expediente = `EXPE-${exp}-${next.toString().padStart(4, '0')}`;
-  }
 
   // Método para manejar la selección de filial
   onFilialSeleccionada(filial: CampusDU | null): void {
     this.filialSeleccionada = filial;
     this.formularioForm.patchValue({ filial: filial?.cperjuridica || '' });
-    this.generarExpediente(filial);
+
+    // Limpiar área/escuela cuando cambia la filial
+    this.formularioForm.patchValue({ escuela: '' });
+
+    if (filial?.cperjuridica && filial?.pS_ESTABID) {
+      // Obtener el expediente real desde la API
+      this.defensoriaService.post_NumeroExpedienteDU(filial.cperjuridica).subscribe({
+        next: (response) => {
+          if (response.body?.isSuccess && response.body.item) {
+            this.expediente = response.body.item.codigoExpediente;
+          } else {
+            // Fallback al método anterior si falla la API
+            this.generarExpedienteLocal(filial);
+          }
+        },
+        error: (error) => {
+          console.error('Error obteniendo expediente:', error);
+          // Fallback al método anterior si falla la API
+          this.generarExpedienteLocal(filial);
+        }
+      });
+
+      // Cargar departamentos/áreas para la filial seleccionada
+      this.cargarDepartamentos(filial.pS_ESTABID);
+    } else {
+      this.expediente = '';
+      // Limpiar opciones cuando no hay filial seleccionada
+      this.escuelaOptions.set([]);
+    }
+  }
+
+  // Método para cargar departamentos basado en la filial
+  private cargarDepartamentos(estabid: string): void {
+    this.defensoriaService.post_DepartamentosDU(estabid).subscribe({
+      next: (response) => {
+        if (response.body?.isSuccess && response.body.lstItem) {
+          const departamentos = response.body.lstItem
+            .filter(dept => dept.cUniOrgNombre && dept.cUniOrgNombre.trim().length > 0)
+            .sort((a, b) => a.cUniOrgNombre.localeCompare(b.cUniOrgNombre, 'es', { sensitivity: 'base' }))
+            .map(dept => ({
+              label: dept.cUniOrgNombre,
+              value: dept.nUniOrg
+            }));
+
+          this.escuelaOptions.set(departamentos);
+        } else {
+          console.warn('No se encontraron departamentos para la filial:', estabid);
+          // Mantener opciones por defecto si no hay departamentos
+        }
+      },
+      error: (error) => {
+        console.error('Error cargando departamentos:', error);
+        // Mantener opciones por defecto si falla la API
+      }
+    });
+  }
+
+  // Método fallback para generar expediente local (mantenemos por compatibilidad)
+  private generarExpedienteLocal(filial: CampusDU): void {
+    const exp = filial.pS_ESTABID.toUpperCase();
+    const current = this.correlativos.get(exp) || 0;
+    const next = current + 1;
+    this.correlativos.set(exp, next);
+    this.expediente = `EXPE-${exp}-${next.toString().padStart(4, '0')}`;
   }
 
   isInvalid(controlName: keyof typeof this.formularioForm.controls): boolean {
@@ -225,9 +275,12 @@ export class FormularioComponent {
   limpiarFormulario() {
     this.formularioForm.reset();
     this.selectedFiles = [];
-  }
+    this.filialSeleccionada = null;
+    this.expediente = '';
 
-  enviarFormulario() {
+    // Limpiar opciones de escuelas/áreas
+    this.escuelaOptions.set([]);
+  }  enviarFormulario() {
     // Validación adicional del grupo otraArea
     const otraAreaGrp = this.formularioForm.get('otraArea')!;
     otraAreaGrp.updateValueAndValidity();

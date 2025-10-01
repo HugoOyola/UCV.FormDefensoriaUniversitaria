@@ -190,10 +190,26 @@
               <i class="mr-2 text-blue-600 pi pi-briefcase"></i>
               Escuela profesional <span class="text-red-500">*</span>
             </label>
-            <p-select formControlName="escuelaProfesional" [options]="escuelaOptions"
+            <p-select formControlName="escuelaProfesional" [options]="escuelaOptions()"
               placeholder="Seleccione su escuela profesional" optionLabel="label" optionValue="value" [filter]="true"
-              appendTo="body" [style]="{ width: '100%' }" class="w-full">
+              appendTo="body" [style]="{ width: '100%' }" class="w-full" [disabled]="!hasFilialSelected">
             </p-select>
+
+            <!-- Mensaje cuando no hay filial seleccionada -->
+            <div *ngIf="!hasFilialSelected" class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div class="flex items-center gap-2">
+                <i class="text-blue-600 pi pi-info-circle"></i>
+                <span class="text-sm text-blue-800">Seleccione primero una filial para ver las escuelas profesionales disponibles</span>
+              </div>
+            </div>
+
+            <!-- Mensaje cuando no hay opciones disponibles -->
+            <div *ngIf="hasFilialSelected && escuelaOptions().length === 0" class="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div class="flex items-center gap-2">
+                <i class="text-yellow-600 pi pi-exclamation-triangle"></i>
+                <span class="text-sm text-yellow-800">No hay escuelas profesionales disponibles para esta filial</span>
+              </div>
+            </div>
             <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('escuelaProfesional')">
               <i class="mr-1 pi pi-exclamation-circle"></i>
               Seleccione su escuela profesional.
@@ -322,10 +338,26 @@
               <i class="mr-2 text-blue-600 pi pi-home"></i>
               Área/Servicio <span class="text-red-500">*</span>
             </label>
-            <p-select formControlName="escuela" [options]="escuelaOptions" placeholder="Seleccione su Área / Servicio"
+            <p-select formControlName="escuela" [options]="escuelaOptions()" placeholder="Seleccione su Área / Servicio"
               optionLabel="label" optionValue="value" [filter]="true" appendTo="body" [style]="{ width: '100%' }"
-              class="w-full">
+              class="w-full" [disabled]="!hasFilialSelected">
             </p-select>
+
+            <!-- Mensaje cuando no hay filial seleccionada -->
+            <div *ngIf="!hasFilialSelected" class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div class="flex items-center gap-2">
+                <i class="text-blue-600 pi pi-info-circle"></i>
+                <span class="text-sm text-blue-800">Seleccione primero una filial para ver las áreas/servicios disponibles</span>
+              </div>
+            </div>
+
+            <!-- Mensaje cuando no hay opciones disponibles -->
+            <div *ngIf="hasFilialSelected && escuelaOptions().length === 0" class="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div class="flex items-center gap-2">
+                <i class="text-yellow-600 pi pi-exclamation-triangle"></i>
+                <span class="text-sm text-yellow-800">No hay áreas/servicios disponibles para esta filial</span>
+              </div>
+            </div>
 
             <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('escuela')">
               <i class="mr-1 pi pi-exclamation-circle"></i>
