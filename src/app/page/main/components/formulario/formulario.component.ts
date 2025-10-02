@@ -39,23 +39,21 @@ type OptionArea = { label: string; value: string };
   templateUrl: './formulario.component.html',
   styleUrls: ['./formulario.component.scss']
 })
-export class FormularioComponent {
+export class FormularioComponent implements OnInit {
   formularioForm: FormGroup;
 
   today = new Date();
   currentYear = this.today.getFullYear();
   expediente = '';
+  idExpediente = 0; // Guardar el ID del expediente desde la API
 
   private correlativos = new Map<string, number>();
 
-  // ✅ Opciones dinámicas desde API (reemplaza hardcoded)
   escuelaOptions = signal<OptionEscuela[]>([]);
   escuelasLoading = signal(false);
 
-  // Opciones dinámicas para Área/Servicio (solo para administrativos)
   areaOptions = signal<OptionArea[]>([]);
 
-  // Signal para modalidades dinámicas desde API
   modalidadOptions = signal<OptionModalidad[]>([]);
   modalidadesLoading = signal(false);
 
@@ -63,19 +61,25 @@ export class FormularioComponent {
   submitting = signal(false);
   filialSeleccionada: CampusDU | null = null;
 
-  // Propiedad para controlar mensajes informativos
   get hasFilialSelected(): boolean {
     return this.filialSeleccionada !== null;
   }
 
+  // Mapeo corregido: key del checkbox -> valor numérico a enviar
+  private readonly OTRA_AREA_VALUES: Record<string, number> = {
+    libro: 1,
+    tribunal: 2,
+    comision: 3,
+    direccion: 4,
+    secretaria: 5,
+    cap: 6,
+    otro: 7
+  };
+
   constructor(private fb: FormBuilder, private defensoriaService: DefensoriaUniversitariaService) {
     this.formularioForm = this.fb.group({
       filial: ['', Validators.required],
-
-      // Tipo de Usuario
       tipoUsuario: ['', Validators.required],
-
-      // Información Personal
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
       documento: ['', [Validators.required, Validators.pattern(/^(\d{8}|[A-Za-z0-9\-]{6,20})$/)]],
@@ -84,21 +88,13 @@ export class FormularioComponent {
       domicilio: ['', Validators.required],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9}$/)]],
       email: ['', [Validators.required, Validators.email]],
-
-      // Apoderado
       isApoderado: [false],
       apoderadoApellidos: [''],
       apoderadoNombres: [''],
       apoderadoEmail: [''],
-
-      // Información Laboral (solo Administrativo)
-      area: [''], // Área/Servicio para administrativos
-
-      // Descripción
+      area: [''],
       expone: ['', [Validators.required, Validators.minLength(50)]],
       solicita: ['', [Validators.required, Validators.minLength(20)]],
-
-      // ¿Se ingresó a otra área? (obligatorio al menos una)
       otraArea: this.fb.group({
         libro: [false],
         tribunal: [false],
@@ -123,22 +119,17 @@ export class FormularioComponent {
       this.actualizarValidadoresOtraArea();
     });
 
-    // Inicializar reglas
     this.actualizarValidadoresSegunTipoUsuario();
     this.actualizarValidadoresApoderado();
     this.actualizarValidadoresOtraArea();
   }
 
-  // Cargar modalidades al inicializar el componente
   ngOnInit(): void {
     this.cargarModalidades();
   }
 
-  // ✅ Método para cargar escuelas profesionales desde la API
   private cargarEscuelasProfesionales(cperjuridica: string): void {
     this.escuelasLoading.set(true);
-
-    // Limpiar el campo de escuela profesional cuando cambia la filial
     this.formularioForm.patchValue({ escuelaProfesional: '' });
 
     this.defensoriaService.post_UnidadesAcademicasDU(cperjuridica).subscribe({
@@ -148,13 +139,12 @@ export class FormularioComponent {
             .filter(unidad => unidad.cuniorgnombre && unidad.cuniorgnombre.trim().length > 0)
             .map(unidad => ({
               label: unidad.cuniorgnombre,
-              value: unidad.nuniorgcodigo
+              value: unidad.nuniorgcodigo.toString()
             }))
             .sort((a, b) => a.label.localeCompare(b.label, 'es', { sensitivity: 'base' }));
 
           this.escuelaOptions.set(escuelas);
         } else {
-          console.warn('No se encontraron unidades académicas para la filial:', cperjuridica);
           this.escuelaOptions.set([]);
         }
         this.escuelasLoading.set(false);
@@ -167,7 +157,6 @@ export class FormularioComponent {
     });
   }
 
-  // Método para cargar modalidades desde la API
   private cargarModalidades(): void {
     this.modalidadesLoading.set(true);
 
@@ -183,7 +172,6 @@ export class FormularioComponent {
 
           this.modalidadOptions.set(modalidades);
         } else {
-          console.warn('No se encontraron modalidades');
           this.modalidadOptions.set([]);
         }
         this.modalidadesLoading.set(false);
@@ -196,7 +184,6 @@ export class FormularioComponent {
     });
   }
 
-  // === Validadores personalizados ===
   private alMenosUnaSeleccion() {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value as Record<string, boolean>;
@@ -211,12 +198,10 @@ export class FormularioComponent {
     const escuelaCtrl = this.formularioForm.get('escuelaProfesional');
     const modalidadCtrl = this.formularioForm.get('modalidad');
 
-    if (tipo === '21') { // Administrativo
-      // Habilitar y requerir área
-      areaCtrl?.addValidators([Validators.required]);
+    if (tipo === '21') {
+      areaCtrl?.setValidators([Validators.required]);
       areaCtrl?.enable();
 
-      // Deshabilitar y limpiar escuela profesional y modalidad
       escuelaCtrl?.clearValidators();
       escuelaCtrl?.setValue('');
       escuelaCtrl?.disable();
@@ -225,17 +210,14 @@ export class FormularioComponent {
       modalidadCtrl?.setValue('');
       modalidadCtrl?.disable();
     } else {
-      // Para otros tipos de usuario
-      // Deshabilitar y limpiar área
       areaCtrl?.clearValidators();
       areaCtrl?.setValue('');
       areaCtrl?.disable();
 
-      // Habilitar y requerir escuela profesional y modalidad
-      escuelaCtrl?.addValidators([Validators.required]);
+      escuelaCtrl?.setValidators([Validators.required]);
       escuelaCtrl?.enable();
 
-      modalidadCtrl?.addValidators([Validators.required]);
+      modalidadCtrl?.setValidators([Validators.required]);
       modalidadCtrl?.enable();
     }
 
@@ -252,9 +234,9 @@ export class FormularioComponent {
     const mail = this.formularioForm.get('apoderadoEmail');
 
     if (isAp) {
-      ape?.addValidators([Validators.required]);
-      nom?.addValidators([Validators.required]);
-      mail?.addValidators([Validators.required, Validators.email]);
+      ape?.setValidators([Validators.required]);
+      nom?.setValidators([Validators.required]);
+      mail?.setValidators([Validators.required, Validators.email]);
     } else {
       ape?.clearValidators(); ape?.setValue('');
       nom?.clearValidators(); nom?.setValue('');
@@ -270,8 +252,9 @@ export class FormularioComponent {
     const grupo = this.formularioForm.get('otraArea')!;
     const otroChecked = (grupo.value as any)?.otro;
     const otroCtrl = this.formularioForm.get('otraAreaOtro')!;
+
     if (otroChecked) {
-      otroCtrl.addValidators([Validators.required, Validators.minLength(3)]);
+      otroCtrl.setValidators([Validators.required, Validators.minLength(3)]);
     } else {
       otroCtrl.clearValidators();
       otroCtrl.setValue('');
@@ -279,52 +262,49 @@ export class FormularioComponent {
     otroCtrl.updateValueAndValidity({ emitEvent: false });
   }
 
-  // === Helpers ===
-
-  // ✅ Método actualizado para manejar la selección de filial
   onFilialSeleccionada(filial: CampusDU | null): void {
     this.filialSeleccionada = filial;
     this.formularioForm.patchValue({ filial: filial?.cperjuridica || '' });
 
-    // Limpiar área y escuela cuando cambia la filial
     this.formularioForm.patchValue({
       area: '',
       escuelaProfesional: ''
     });
 
-    // Limpiar opciones de escuelas y áreas
     this.escuelaOptions.set([]);
     this.areaOptions.set([]);
 
     if (filial?.cperjuridica && filial?.pS_ESTABID) {
-      // Obtener el expediente real desde la API
+      // Obtener AMBOS valores del expediente desde la API
       this.defensoriaService.post_NumeroExpedienteDU(filial.cperjuridica).subscribe({
         next: (response) => {
           if (response.body?.isSuccess && response.body.item) {
+            // Guardar ambos valores: ID numérico y código string
+            this.idExpediente = parseInt(response.body.item.nroExpediente) || 0;
             this.expediente = response.body.item.codigoExpediente;
+
+            console.log('📋 Expediente obtenido:', {
+              idExpediente: this.idExpediente,
+              codigoExpediente: this.expediente
+            });
           } else {
-            // Fallback al método anterior si falla la API
             this.generarExpedienteLocal(filial);
           }
         },
         error: (error) => {
           console.error('Error obteniendo expediente:', error);
-          // Fallback al método anterior si falla la API
           this.generarExpedienteLocal(filial);
         }
       });
 
-      // ✅ Cargar escuelas profesionales para la filial seleccionada
       this.cargarEscuelasProfesionales(filial.cperjuridica);
-
-      // Cargar departamentos/áreas para la filial seleccionada (solo para administrativos)
       this.cargarDepartamentos(filial.pS_ESTABID);
     } else {
       this.expediente = '';
+      this.idExpediente = 0;
     }
   }
 
-  // Método para cargar departamentos basado en la filial (para Área/Servicio de administrativos)
   private cargarDepartamentos(estabid: string): void {
     this.defensoriaService.post_DepartamentosDU(estabid).subscribe({
       next: (response) => {
@@ -339,7 +319,6 @@ export class FormularioComponent {
 
           this.areaOptions.set(departamentos);
         } else {
-          console.warn('No se encontraron departamentos para la filial:', estabid);
           this.areaOptions.set([]);
         }
       },
@@ -350,21 +329,20 @@ export class FormularioComponent {
     });
   }
 
-  // Método fallback para generar expediente local (mantenemos por compatibilidad)
   private generarExpedienteLocal(filial: CampusDU): void {
     const exp = filial.pS_ESTABID.toUpperCase();
     const current = this.correlativos.get(exp) || 0;
     const next = current + 1;
     this.correlativos.set(exp, next);
+    this.idExpediente = next; // También actualizar el ID
     this.expediente = `EXPE-${exp}-${next.toString().padStart(4, '0')}`;
   }
 
-  isInvalid(controlName: keyof typeof this.formularioForm.controls): boolean {
-    const ctrl = this.formularioForm.get(controlName as string);
+  isInvalid(controlName: string): boolean {
+    const ctrl = this.formularioForm.get(controlName);
     return !!ctrl && ctrl.invalid && (ctrl.touched || ctrl.dirty);
   }
 
-  // FileUpload custom
   onUpload(event: FileUploadHandlerEvent) {
     const incoming = (event.files ?? []) as File[];
     this.selectedFiles = [...this.selectedFiles, ...incoming];
@@ -380,14 +358,11 @@ export class FormularioComponent {
     this.selectedFiles = [];
     this.filialSeleccionada = null;
     this.expediente = '';
-
-    // Limpiar opciones dinámicas
     this.escuelaOptions.set([]);
     this.areaOptions.set([]);
   }
 
   enviarFormulario() {
-    // Validación adicional del grupo otraArea
     const otraAreaGrp = this.formularioForm.get('otraArea')!;
     otraAreaGrp.updateValueAndValidity();
 
@@ -397,36 +372,66 @@ export class FormularioComponent {
       return;
     }
 
-    // Transformar "otraArea" (booleans) a lista de áreas seleccionadas
+    // Transformar checkboxes a array de valores numéricos
     const otraAreaRaw = otraAreaGrp.value as Record<string, boolean>;
-    const mapKeys: Record<string, string> = {
-      libro: 'Libro de Reclamaciones',
-      tribunal: 'Tribunal de Honor',
-      comision: 'Comisión de Hostigamiento',
-      direccion: 'Dirección General',
-      secretaria: 'Secretaría General',
-      cap: 'Centro de Atención Personalizada',
-      otro: 'Otro'
-    };
-    const otraAreasSeleccionadas = Object.entries(otraAreaRaw)
-      .filter(([, v]) => v)
-      .map(([k]) => mapKeys[k]);
+    const opciones: number[] = Object.entries(otraAreaRaw)
+      .filter(([key, isChecked]) => isChecked && key in this.OTRA_AREA_VALUES)
+      .map(([key]) => this.OTRA_AREA_VALUES[key]);
 
+    // Construir payload según la estructura del API
     const payload = {
-      ...this.formularioForm.value,
-      otraAreasSeleccionadas,
-      otraAreaOtro: this.formularioForm.get('otraAreaOtro')?.value || null,
-      evidencias: this.selectedFiles.map(f => ({ name: f.name, size: f.size, type: f.type }))
+      idExpediente: this.idExpediente, // Usar el ID numérico obtenido del API
+      codigoExpediente: this.expediente,
+      tipoUsuario: parseInt(this.formularioForm.value.tipoUsuario),
+      cPerJuridica: this.formularioForm.value.filial,
+      cPerApellido: this.filialSeleccionada?.cPerApellido || '',
+      correoFilial: this.formularioForm.value.email,
+      nombres: this.formularioForm.value.nombre,
+      apellidos: this.formularioForm.value.apellidos,
+      dni: this.formularioForm.value.documento,
+      nUniOrgCodigo: this.formularioForm.value.escuelaProfesional
+        ? parseInt(this.formularioForm.value.escuelaProfesional)
+        : 0,
+      nModalidad: this.formularioForm.value.modalidad || 0,
+      domicilio: this.formularioForm.value.domicilio,
+      telefono: this.formularioForm.value.telefono,
+      correo: this.formularioForm.value.email,
+      existeApo: this.formularioForm.value.isApoderado,
+      apellidosApo: this.formularioForm.value.apoderadoApellidos || '',
+      nombresApo: this.formularioForm.value.apoderadoNombres || '',
+      correoApo: this.formularioForm.value.apoderadoEmail || '',
+      idDepartamento: this.formularioForm.value.area
+        ? parseInt(this.formularioForm.value.area)
+        : 0,
+      opciones: opciones.join(','), // Array convertido a string separado por comas
+      textoOtros: this.formularioForm.value.otraAreaOtro || '',
+      descripcion: this.formularioForm.value.expone,
+      solicita: this.formularioForm.value.solicita,
+      Archivos: this.selectedFiles.map(f => f.name) // Array de nombres de archivos
     };
 
-    // Mostrar en consola los datos completos que se envían
     console.log('=== DATOS DEL FORMULARIO ENVIADOS ===');
+    console.log('📋 Estructura del API:');
     console.log(JSON.stringify(payload, null, 2));
-    // También puedes ver el objeto plano:
-    console.log('Objeto plano:', payload);
+    console.log('\n✅ Áreas seleccionadas:', opciones);
+    console.log('📝 Opciones como string:', payload.opciones);
 
     try {
       this.submitting.set(true);
+
+      // Aquí harías la llamada real al servicio:
+      // this.defensoriaService.enviarFormulario(payload).subscribe({
+      //   next: (response) => {
+      //     console.log('Respuesta del servidor:', response);
+      //     alert('Formulario enviado correctamente');
+      //     this.limpiarFormulario();
+      //   },
+      //   error: (error) => {
+      //     console.error('Error:', error);
+      //     alert('Ocurrió un error al enviar el formulario.');
+      //   }
+      // });
+
       alert('Formulario enviado correctamente');
       this.limpiarFormulario();
     } catch (e) {

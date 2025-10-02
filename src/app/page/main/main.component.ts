@@ -48,10 +48,10 @@ export class MainComponent {
 	@HostListener('window:message', ['$event'])
 	onMessage(event: MessageEvent): void {
 		if (this._mainSharedService.cPerCodigo() === '') {
-			console.log('😎😋 =>', event.source);
+			// console.log('😎😋 =>', event.source);
 			if (event.source) {
 				// Verificar el origen para mayor seguridad
-				console.log('event.data =>', event.data);
+				// console.log('event.data =>', event.data);
 				// const data_cPercodigo = event.data.cPercodigo;
 			}
 		}

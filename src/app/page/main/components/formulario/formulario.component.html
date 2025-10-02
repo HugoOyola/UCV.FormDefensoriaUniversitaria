@@ -204,7 +204,7 @@
             </p-select>
 
             <!-- Mensaje cuando es administrativo (reemplaza el select) -->
-            <div *ngIf="formularioForm.get('tipoUsuario')?.value === '21'" class="p-3 border border-solid border-gray-300 rounded-lg bg-gray-100">
+            <div *ngIf="formularioForm.get('tipoUsuario')?.value === '21'" class="p-3 bg-gray-100 border border-gray-300 border-solid rounded-lg">
               <div class="flex items-center gap-2">
                 <i class="text-gray-600 pi pi-info-circle"></i>
                 <span class="text-sm text-gray-700">Este campo no es requerido para usuarios administrativos</span>
@@ -263,7 +263,7 @@
             </p-select>
 
             <!-- Mensaje cuando es administrativo (reemplaza el select) -->
-            <div *ngIf="formularioForm.get('tipoUsuario')?.value === '21'" class="p-3 border border-solid border-gray-300 rounded-lg bg-gray-100">
+            <div *ngIf="formularioForm.get('tipoUsuario')?.value === '21'" class="p-3 bg-gray-100 border border-gray-300 border-solid rounded-lg">
               <div class="flex items-center gap-2">
                 <i class="text-gray-600 pi pi-info-circle"></i>
                 <span class="text-sm text-gray-700">Este campo no es requerido para usuarios administrativos</span>
@@ -447,54 +447,49 @@
       </div>
 
       <div class="p-6">
-        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+        <!--  Agregar formGroupName aquí -->
+        <div formGroupName="otraArea" class="grid grid-cols-1 gap-3 md:grid-cols-2">
           <label class="flex items-center gap-3">
-            <p-checkbox formControlName="libro" [binary]="true" inputId="oa-libro"
-              [formControl]="$any(formularioForm.get('otraArea.libro'))"></p-checkbox>
+            <!-- Ahora solo usa formControlName sin el path completo -->
+            <p-checkbox formControlName="libro" [binary]="true" inputId="oa-libro"></p-checkbox>
             <span for="oa-libro">Libro de Reclamaciones</span>
           </label>
 
           <label class="flex items-center gap-3">
-            <p-checkbox [formControl]="$any(formularioForm.get('otraArea.tribunal'))" [binary]="true"
-              inputId="oa-tribunal"></p-checkbox>
+            <p-checkbox formControlName="tribunal" [binary]="true" inputId="oa-tribunal"></p-checkbox>
             <span for="oa-tribunal">Tribunal de Honor</span>
           </label>
 
           <label class="flex items-center gap-3">
-            <p-checkbox [formControl]="$any(formularioForm.get('otraArea.comision'))" [binary]="true"
-              inputId="oa-comision"></p-checkbox>
+            <p-checkbox formControlName="comision" [binary]="true" inputId="oa-comision"></p-checkbox>
             <span for="oa-comision">Comisión de Hostigamiento</span>
           </label>
 
           <label class="flex items-center gap-3">
-            <p-checkbox [formControl]="$any(formularioForm.get('otraArea.direccion'))" [binary]="true"
-              inputId="oa-direccion"></p-checkbox>
+            <p-checkbox formControlName="direccion" [binary]="true" inputId="oa-direccion"></p-checkbox>
             <span for="oa-direccion">Dirección General</span>
           </label>
 
           <label class="flex items-center gap-3">
-            <p-checkbox [formControl]="$any(formularioForm.get('otraArea.secretaria'))" [binary]="true"
-              inputId="oa-secretaria"></p-checkbox>
+            <p-checkbox formControlName="secretaria" [binary]="true" inputId="oa-secretaria"></p-checkbox>
             <span for="oa-secretaria">Secretaría General</span>
           </label>
 
           <label class="flex items-center gap-3">
-            <p-checkbox [formControl]="$any(formularioForm.get('otraArea.cap'))" [binary]="true"
-              inputId="oa-cap"></p-checkbox>
+            <p-checkbox formControlName="cap" [binary]="true" inputId="oa-cap"></p-checkbox>
             <span for="oa-cap">Centro de Atención Personalizada</span>
           </label>
 
           <div class="md:col-span-2">
             <label class="flex items-center gap-3">
-              <p-checkbox [formControl]="$any(formularioForm.get('otraArea.otro'))" [binary]="true"
-                inputId="oa-otro"></p-checkbox>
+              <p-checkbox formControlName="otro" [binary]="true" inputId="oa-otro"></p-checkbox>
               <span for="oa-otro">Otro <span class="text-sm text-gray-500">(especifique)</span></span>
             </label>
 
-            <div class="mt-2" *ngIf="formularioForm.get('otraArea')?.value?.otro">
+            <div class="mt-2" *ngIf="formularioForm.get('otraArea.otro')?.value">
               <input pInputText formControlName="otraAreaOtro" placeholder="Especifique el área" class="w-full" />
               <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('otraAreaOtro')">
-                <i class="mr-1 pi pi-exclamation-circle"></i> Este campo es obligatorio cuando selecciona “Otro”.
+                <i class="mr-1 pi pi-exclamation-circle"></i> Este campo es obligatorio cuando selecciona "Otro".
               </p>
             </div>
           </div>
