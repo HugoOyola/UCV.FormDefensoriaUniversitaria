@@ -68,7 +68,6 @@ export class FormularioComponent implements OnInit {
   modalidadesLoading = signal(false);
 
   // Sistema de archivos mejorado
-  selectedFiles: UploadedFile[] = [];
   submitting = signal(false);
   filialSeleccionada: CampusDU | null = null;
 
@@ -93,9 +92,9 @@ export class FormularioComponent implements OnInit {
     return this.filialSeleccionada !== null;
   }
 
-  get canUploadMore(): boolean {
-    return this.selectedFiles.length < this.MAX_FILES;
-  }
+  // get canUploadMore(): boolean {
+  //   return this.selectedFiles.length < this.MAX_FILES;
+  // }
 
   get totalSize(): string {
     const total = this.selectedFiles.reduce((sum, file) => sum + file.size, 0);
@@ -391,93 +390,105 @@ export class FormularioComponent implements OnInit {
   // ========== MÉTODOS PARA MANEJO DE ARCHIVOS ==========
 
   // Maneja la selección de archivos
-  onFileSelect(event: any): void {
-    let files: File[] = [];
+  selectedFiles: File[] = [];
+  canUploadMore = true;
 
-    console.log('=== ARCHIVOS SELECCIONADOS ===');
-    console.log('Evento recibido:', event);
-
-    // Priorizar currentFiles si existe (contiene los archivos acumulados)
-    if (event.currentFiles && Array.isArray(event.currentFiles)) {
-      files = event.currentFiles;
-    }
-    // Si no, intentar con event.files (puede ser FileList o Array)
-    else if (event.files) {
-      // Convertir FileList a Array si es necesario
-      if (event.files instanceof FileList) {
-        files = Array.from(event.files);
-      } else if (Array.isArray(event.files)) {
-        files = event.files;
-      } else {
-        files = [event.files];
-      }
-    }
-
-    console.log(`Total de archivos en el evento: ${files.length}`);
-
-    files.forEach((file, index) => {
-      // Validar que el archivo sea válido
-      if (!file || !file.name) {
-        console.warn(`Archivo ${index + 1}: Objeto de archivo inválido`, file);
-        return;
+  onFileSelect (event: any): void {
+  for (const file of event.files as File[]) {
+        this.selectedFiles.push(file);
       }
 
-      // Verificar si el archivo ya existe en la lista
-      const existeArchivo = this.selectedFiles.some(f =>
-        f.name === file.name && f.size === file.size
-      );
+      this.canUploadMore = this.selectedFiles.length < this.MAX_FILES;
 
-      if (existeArchivo) {
-        console.warn(`Archivo "${file.name}" ya está en la lista`);
-        return;
-      }
-
-      // Validar límite de archivos
-      if (this.selectedFiles.length >= this.MAX_FILES) {
-        console.warn(`No se puede agregar más archivos. Límite: ${this.MAX_FILES}`);
-        return;
-      }
-
-      // Validar tamaño
-      if (file.size > this.MAX_FILE_SIZE) {
-        console.error(`Archivo "${file.name}" excede el tamaño máximo de ${this.formatSize(this.MAX_FILE_SIZE)}`);
-        return;
-      }
-
-      // Validar extensión
-      const extension = '.' + file.name.split('.').pop()?.toLowerCase();
-      if (!this.ALLOWED_EXTENSIONS.includes(extension)) {
-        console.error(`Archivo "${file.name}" tiene una extensión no permitida`);
-        return;
-      }
-
-      // Crear URL del objeto para preview
-      const objectURL = URL.createObjectURL(file);
-
-      const uploadedFile: UploadedFile = {
-        name: file.name,
-        size: file.size,
-        objectURL: objectURL,
-        file: file
-      };
-
-      this.selectedFiles.push(uploadedFile);
-
-      console.log(`✓ Archivo ${index + 1} agregado:`, {
-        nombre: file.name,
-        tamaño: this.formatSize(file.size),
-        tipo: file.type,
-        extensión: extension
-      });
-    });
-
-    console.log(`Total archivos seleccionados: ${this.selectedFiles.length}`);
-    console.log('Tamaño total:', this.totalSize);
-
-    if (this.fileUpload) {
-      this.fileUpload.clear();
-    }
+      console.log("📂 Archivos seleccionados:", this.selectedFiles);
   }
+  // onFileSelect(event: any): void {
+  //   let files: File[] = [];
+
+  //   console.log('=== ARCHIVOS SELECCIONADOS ===');
+  //   console.log('Evento recibido:', event);
+
+  //   // Priorizar currentFiles si existe (contiene los archivos acumulados)
+  //   if (event.currentFiles && Array.isArray(event.currentFiles)) {
+  //     files = event.currentFiles;
+  //   }
+  //   // Si no, intentar con event.files (puede ser FileList o Array)
+  //   else if (event.files) {
+  //     // Convertir FileList a Array si es necesario
+  //     if (event.files instanceof FileList) {
+  //       files = Array.from(event.files);
+  //     } else if (Array.isArray(event.files)) {
+  //       files = event.files;
+  //     } else {
+  //       files = [event.files];
+  //     }
+  //   }
+
+  //   console.log(`Total de archivos en el evento: ${files.length}`);
+
+  //   files.forEach((file, index) => {
+  //     // Validar que el archivo sea válido
+  //     if (!file || !file.name) {
+  //       console.warn(`Archivo ${index + 1}: Objeto de archivo inválido`, file);
+  //       return;
+  //     }
+
+  //     // Verificar si el archivo ya existe en la lista
+  //     const existeArchivo = this.selectedFiles.some(f =>
+  //       f.name === file.name && f.size === file.size
+  //     );
+
+  //     if (existeArchivo) {
+  //       console.warn(`Archivo "${file.name}" ya está en la lista`);
+  //       return;
+  //     }
+
+  //     // Validar límite de archivos
+  //     if (this.selectedFiles.length >= this.MAX_FILES) {
+  //       console.warn(`No se puede agregar más archivos. Límite: ${this.MAX_FILES}`);
+  //       return;
+  //     }
+
+  //     // Validar tamaño
+  //     if (file.size > this.MAX_FILE_SIZE) {
+  //       console.error(`Archivo "${file.name}" excede el tamaño máximo de ${this.formatSize(this.MAX_FILE_SIZE)}`);
+  //       return;
+  //     }
+
+  //     // Validar extensión
+  //     const extension = '.' + file.name.split('.').pop()?.toLowerCase();
+  //     if (!this.ALLOWED_EXTENSIONS.includes(extension)) {
+  //       console.error(`Archivo "${file.name}" tiene una extensión no permitida`);
+  //       return;
+  //     }
+
+  //     // Crear URL del objeto para preview
+  //     const objectURL = URL.createObjectURL(file);
+
+  //     const uploadedFile: UploadedFile = {
+  //       name: file.name,
+  //       size: file.size,
+  //       objectURL: objectURL,
+  //       file: file
+  //     };
+
+  //     this.selectedFiles.push(uploadedFile);
+
+  //     console.log(`✓ Archivo ${index + 1} agregado:`, {
+  //       nombre: file.name,
+  //       tamaño: this.formatSize(file.size),
+  //       tipo: file.type,
+  //       extensión: extension
+  //     });
+  //   });
+
+  //   console.log(`Total archivos seleccionados: ${this.selectedFiles.length}`);
+  //   console.log('Tamaño total:', this.totalSize);
+
+  //   if (this.fileUpload) {
+  //     this.fileUpload.clear();
+  //   }
+  // }
 
   // Elimina un archivo de la lista
   onRemoveFile(index: number): void {
@@ -486,9 +497,6 @@ export class FormularioComponent implements OnInit {
     console.log('=== ELIMINANDO ARCHIVO ===');
     console.log(`Archivo: ${removedFile.name}`);
     console.log(`Tamaño: ${this.formatSize(removedFile.size)}`);
-
-    // Liberar memoria del objectURL
-    URL.revokeObjectURL(removedFile.objectURL);
 
     this.selectedFiles.splice(index, 1);
 
@@ -503,11 +511,6 @@ export class FormularioComponent implements OnInit {
   onClearFiles(): void {
     console.log('=== LIMPIANDO TODOS LOS ARCHIVOS ===');
     console.log(`Total archivos eliminados: ${this.selectedFiles.length}`);
-
-    // Liberar memoria de todos los objectURLs
-    this.selectedFiles.forEach(file => {
-      URL.revokeObjectURL(file.objectURL);
-    });
 
     this.selectedFiles = [];
 
@@ -600,7 +603,7 @@ export class FormularioComponent implements OnInit {
 
   limpiarFormulario() {
     this.formularioForm.reset();
-    this.onClearFiles();
+    // this.onClearFiles();
     this.filialSeleccionada = null;
     this.expediente = '';
     this.idExpediente = 0;
@@ -631,57 +634,120 @@ export class FormularioComponent implements OnInit {
       .filter(([key, isChecked]) => isChecked && key in this.OTRA_AREA_VALUES)
       .map(([key]) => this.OTRA_AREA_VALUES[key]);
 
-    const payload: RegistroExpedienteDU = {
-      idExpediente: this.idExpediente,
-      codigoExpediente: this.expediente,
-      tipoUsuario: parseInt(this.formularioForm.value.tipoUsuario),
-      cPerJuridica: this.formularioForm.value.filial,
-      cPerApellido: this.filialSeleccionada?.cPerApellido || '',
-      correoFilial: this.correoFilial,
-      nombres: this.formularioForm.value.nombre,
-      apellidos: this.formularioForm.value.apellidos,
-      dni: this.formularioForm.value.documento,
-      nUniOrgCodigo: this.formularioForm.value.escuelaProfesional
-        ? parseInt(this.formularioForm.value.escuelaProfesional)
-        : 0,
-      nModalidad: this.formularioForm.value.modalidad || 0,
-      domicilio: this.formularioForm.value.domicilio,
-      telefono: this.formularioForm.value.telefono,
-      correo: this.formularioForm.value.email,
-      existeApo: this.formularioForm.value.isApoderado,
-      apellidosApo: this.formularioForm.value.apoderadoApellidos || '',
-      nombresApo: this.formularioForm.value.apoderadoNombres || '',
-      correoApo: this.formularioForm.value.apoderadoEmail || '',
-      idDepartamento: this.formularioForm.value.area
-        ? parseInt(this.formularioForm.value.area)
-        : 0,
-      opciones: opciones.join(','),
-      textoOtros: this.formularioForm.value.otraAreaOtro || '',
-      descripcion: this.formularioForm.value.expone,
-      solicita: this.formularioForm.value.solicita,
-      Archivos: this.selectedFiles.map(f => f.name)
-    };
+    const formData = new FormData();
 
-    console.log('\n========================================');
-    console.log('ENVIANDO FORMULARIO AL BACKEND');
-    console.log('========================================');
-    console.log('Datos del formulario:');
-    console.log(JSON.stringify(payload, null, 2));
+    // Datos del Expediente
+    formData.append('idExpediente', this.idExpediente.toString());
+    formData.append('codigoExpediente', this.expediente);
+    formData.append('correoFilial', this.correoFilial);
 
-    console.log('\n Archivos adjuntos:');
-    if (this.selectedFiles.length > 0) {
-      console.log(`✓ Total: ${this.selectedFiles.length} archivo(s)`);
-      console.log(`✓ Tamaño total: ${this.totalSize}`);
-      this.selectedFiles.forEach((file, index) => {
-        console.log(`  ${index + 1}. ${file.name} (${this.formatSize(file.size)})`);
-      });
-    } else {
-      console.log('Sin archivos adjuntos (opcional)');
-    }
-    console.log('========================================\n');
+    // Tipo de Usuario y Filial
+    formData.append('tipoUsuario', this.formularioForm.get('tipoUsuario')?.value);
+    formData.append('cPerJuridica', this.formularioForm.get('filial')?.value);
+    formData.append('cPerApellido', this.filialSeleccionada?.cPerApellido || '');
+
+    // Datos Personales
+    formData.append('nombres', this.formularioForm.get('nombre')?.value);
+    formData.append('apellidos', this.formularioForm.get('apellidos')?.value);
+    formData.append('dni', this.formularioForm.get('documento')?.value);
+    formData.append('domicilio', this.formularioForm.get('domicilio')?.value);
+    formData.append('telefono', this.formularioForm.get('telefono')?.value);
+    formData.append('correo', this.formularioForm.get('email')?.value);
+
+    // Datos Academicos
+    formData.append('nUniOrgCodigo', this.formularioForm.get('escuelaProfesional')?.value || '0');
+    formData.append('nModalidad', this.formularioForm.get('modalidad')?.value || '0');
+
+    // Datos del Apoderado
+    formData.append('existeApo', this.formularioForm.get('isApoderado')?.value ? 'true' : 'false');
+    formData.append('apellidosApo', this.formularioForm.get('apoderadoApellidos')?.value || '');
+    formData.append('nombresApo', this.formularioForm.get('apoderadoNombres')?.value || '');
+    formData.append('correoApo', this.formularioForm.get('apoderadoEmail')?.value || '');
+
+    // Datos Laborales
+    formData.append('idDepartamento', this.formularioForm.get('area')?.value || '0');
+
+    // Datos de la Denuncia/Reclamo
+    formData.append('opciones', opciones.join(','));
+    formData.append('textoOtros', this.formularioForm.get('otraAreaOtro')?.value || '');
+    formData.append('descripcion', this.formularioForm.get('expone')?.value);
+    formData.append('solicita', this.formularioForm.get('solicita')?.value);
+
+
+    this.selectedFiles.forEach((file) => {
+      formData.append("Archivos", file, file.name);
+    });
+
+    // if (this.selectedFiles.length > 0) {
+    //   this.selectedFiles.forEach((uploadedFile, index) => {
+    //     formData.append('files', uploadedFile.file, uploadedFile.name);
+    //   });
+    // } else {
+    //   console.log('Sin archivos adjuntos');
+    // }
+
+    formData.forEach((value, key) => {
+      if (value instanceof File) {
+        console.log(`👉 ${key}: ${value.name} (${value.size} bytes)`);
+      } else {
+        console.log(`👉 ${key}: ${value}`);
+      }
+    });
+
+    console.log(formData);
+    // const payload: RegistroExpedienteDU = {
+    //   idExpediente: this.idExpediente,
+    //   codigoExpediente: this.expediente,
+    //   tipoUsuario: parseInt(this.formularioForm.value.tipoUsuario),
+    //   cPerJuridica: this.formularioForm.value.filial,
+    //   cPerApellido: this.filialSeleccionada?.cPerApellido || '',
+    //   correoFilial: this.correoFilial,
+    //   nombres: this.formularioForm.value.nombre,
+    //   apellidos: this.formularioForm.value.apellidos,
+    //   dni: this.formularioForm.value.documento,
+    //   nUniOrgCodigo: this.formularioForm.value.escuelaProfesional
+    //     ? parseInt(this.formularioForm.value.escuelaProfesional)
+    //     : 0,
+    //   nModalidad: this.formularioForm.value.modalidad || 0,
+    //   domicilio: this.formularioForm.value.domicilio,
+    //   telefono: this.formularioForm.value.telefono,
+    //   correo: this.formularioForm.value.email,
+    //   existeApo: this.formularioForm.value.isApoderado,
+    //   apellidosApo: this.formularioForm.value.apoderadoApellidos || '',
+    //   nombresApo: this.formularioForm.value.apoderadoNombres || '',
+    //   correoApo: this.formularioForm.value.apoderadoEmail || '',
+    //   idDepartamento: this.formularioForm.value.area
+    //     ? parseInt(this.formularioForm.value.area)
+    //     : 0,
+    //   opciones: opciones.join(','),
+    //   textoOtros: this.formularioForm.value.otraAreaOtro || '',
+    //   descripcion: this.formularioForm.value.expone,
+    //   solicita: this.formularioForm.value.solicita,
+    //   Archivos: this.selectedFiles.map(f => f.name)
+    // };
+
+    // console.log("Datos del formulario:", payload);
+
+    // console.log('\n========================================');
+    // console.log('ENVIANDO FORMULARIO AL BACKEND');
+    // console.log('========================================');
+    // console.log('Datos del formulario:');
+    // console.log(JSON.stringify(payload, null, 2));
+
+    // console.log('\n Archivos adjuntos:');
+    // if (this.selectedFiles.length > 0) {
+    //   console.log(`✓ Total: ${this.selectedFiles.length} archivo(s)`);
+    //   console.log(`✓ Tamaño total: ${this.totalSize}`);
+    //   this.selectedFiles.forEach((file, index) => {
+    //     console.log(`  ${index + 1}. ${file.name} (${this.formatSize(file.size)})`);
+    //   });
+    // } else {
+    //   console.log('Sin archivos adjuntos (opcional)');
+    // }
+    // console.log('========================================\n');
 
     // LLAMADA REAL AL SERVICIO
-    this.defensoriaService.post_RegistrarExpedienteDU(payload).subscribe({
+    this.defensoriaService.post_RegistrarExpedienteDU(formData).subscribe({
       next: (response) => {
         this.submitting.set(false);
         console.log('✅ RESPUESTA DEL SERVIDOR:');

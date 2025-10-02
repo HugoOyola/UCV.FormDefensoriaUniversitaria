@@ -24,10 +24,3 @@ export interface RegistroExpedienteDU {
   solicita: string;               // Lo que solicita (SOLICITA)
   Archivos: string[];             // Array de nombres de archivos adjuntos
 }
-
-// Respuesta del servidor al registrar expediente
-export interface RegistroExpedienteResponse {
-  mensaje: string;                // Mensaje de confirmación
-  idRegistro?: number;            // ID del registro creado (opcional)
-  numeroExpediente?: string;      // Número de expediente asignado (opcional)
-}

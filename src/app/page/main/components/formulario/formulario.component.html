@@ -685,23 +685,25 @@
                 </div>
 
                 <!-- Preview para imágenes -->
-                <div *ngIf="isImage(file.name)" class="mt-3">
+                <!-- <div *ngIf="isImage(file.name)" class="mt-3">
                   <img [src]="file.objectURL" [alt]="file.name"
                     class="object-cover w-full h-32 border border-gray-200 border-solid rounded-lg">
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
 
           <!-- Mensaje cuando no hay archivos -->
-          <div *ngIf="selectedFiles.length === 0" class="p-8 text-center border-2 border-gray-200 border-dashed rounded-lg">
+          <div *ngIf="selectedFiles.length === 0"
+            class="p-8 text-center border-2 border-gray-200 border-dashed rounded-lg">
             <div class="flex flex-col items-center gap-3">
               <div class="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full">
                 <i class="text-3xl text-gray-400 pi pi-cloud-upload"></i>
               </div>
               <div>
                 <p class="font-medium text-gray-700">No hay archivos adjuntos</p>
-                <p class="text-sm text-gray-500">Los archivos son opcionales. Puedes continuar sin adjuntar evidencias.</p>
+                <p class="text-sm text-gray-500">Los archivos son opcionales. Puedes continuar sin adjuntar evidencias.
+                </p>
               </div>
             </div>
           </div>

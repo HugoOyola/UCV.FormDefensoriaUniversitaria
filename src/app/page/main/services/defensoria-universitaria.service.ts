@@ -1,4 +1,4 @@
-import { HttpResponse } from '@angular/common/http';
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@environment/environment';
 import { ResponseResultLst, ResponseResultItem } from '@interface/responseResult.interface';
@@ -9,7 +9,6 @@ import { ExpedienteDU } from '../interface/expediente.interface';
 import { DepartamentoDU } from '../interface/departamento.interface';
 import { ModalidadDU } from '../interface/modalidad.interface';
 import { UnidadAcademicaDU } from '../interface/unidad-academica.interface';
-import { RegistroExpedienteDU, RegistroExpedienteResponse } from '../interface/registro-expediente.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -95,11 +94,10 @@ export class DefensoriaUniversitariaService extends GlobalService {
    * @param data Datos del expediente a registrar
    * @returns Observable con la respuesta de la API
    */
-  post_RegistrarExpedienteDU(data: RegistroExpedienteDU): Observable<HttpResponse<ResponseResultItem<RegistroExpedienteResponse>>> {
+  post_RegistrarExpedienteDU(formData: FormData): Observable<HttpResponse<ResponseResultItem<any>>> {
     const url = this.ApiDefensoriaUniversitaria.url + this.ApiDefensoriaUniversitaria.endpoints.Du_RegistrarExpedienteDU;
 
-    return this._http.post<ResponseResultItem<RegistroExpedienteResponse>>(url, data, {
-      headers: this.headers_a_json,
+    return this._http.post<ResponseResultItem<any>>(url, formData, {
       observe: 'response',
     });
   }
