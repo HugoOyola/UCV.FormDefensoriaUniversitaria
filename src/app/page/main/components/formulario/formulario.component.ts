@@ -17,6 +17,7 @@ import { ModalidadDU } from '../../interface/modalidad.interface';
 
 type OptionEscuela = { label: string; value: string };
 type OptionModalidad = { label: string; value: number };
+type OptionArea = { label: string; value: string };
 
 @Component({
   selector: 'app-formulario',
@@ -47,8 +48,15 @@ export class FormularioComponent {
 
   private correlativos = new Map<string, number>();
 
-  // Opciones dinámicas para áreas/departamentos (inicia vacío)
-  escuelaOptions = signal<OptionEscuela[]>([]);
+  // Opciones hardcodeadas para Escuela Profesional
+  escuelaOptions = signal<OptionEscuela[]>([
+    { label: 'Ingeniería de Sistemas', value: 'sistemas' },
+    { label: 'Derecho', value: 'derecho' },
+    { label: 'Administración', value: 'administracion' }
+  ]);
+
+  // Opciones dinámicas para Área/Servicio (solo para administrativos)
+  areaOptions = signal<OptionArea[]>([]);
 
   // Signal para modalidades dinámicas desde API
   modalidadOptions = signal<OptionModalidad[]>([]);
@@ -87,7 +95,7 @@ export class FormularioComponent {
       apoderadoEmail: [''],
 
       // Información Laboral (solo Administrativo)
-      escuela: [''], // Área/Servicio
+      area: [''], // Área/Servicio para administrativos
 
       // Descripción
       expone: ['', [Validators.required, Validators.minLength(50)]],
@@ -105,8 +113,6 @@ export class FormularioComponent {
       }, { validators: [this.alMenosUnaSeleccion()] }),
       otraAreaOtro: ['']
     });
-
-    // Reglas reactivas - Ya no necesitamos este subscribe ya que manejamos la filial de otra manera
 
     this.formularioForm.get('tipoUsuario')?.valueChanges.subscribe(() => {
       this.actualizarValidadoresSegunTipoUsuario();
@@ -171,15 +177,41 @@ export class FormularioComponent {
 
   private actualizarValidadoresSegunTipoUsuario() {
     const tipo = this.formularioForm.get('tipoUsuario')?.value;
-    const areaCtrl = this.formularioForm.get('escuela');
+    const areaCtrl = this.formularioForm.get('area');
+    const escuelaCtrl = this.formularioForm.get('escuelaProfesional');
+    const modalidadCtrl = this.formularioForm.get('modalidad');
 
-    if (tipo === 'administrativo') {
+    if (tipo === '21') { // Administrativo
+      // Habilitar y requerir área
       areaCtrl?.addValidators([Validators.required]);
+      areaCtrl?.enable();
+
+      // Deshabilitar y limpiar escuela profesional y modalidad
+      escuelaCtrl?.clearValidators();
+      escuelaCtrl?.setValue('');
+      escuelaCtrl?.disable();
+
+      modalidadCtrl?.clearValidators();
+      modalidadCtrl?.setValue('');
+      modalidadCtrl?.disable();
     } else {
+      // Para otros tipos de usuario
+      // Deshabilitar y limpiar área
       areaCtrl?.clearValidators();
       areaCtrl?.setValue('');
+      areaCtrl?.disable();
+
+      // Habilitar y requerir escuela profesional y modalidad
+      escuelaCtrl?.addValidators([Validators.required]);
+      escuelaCtrl?.enable();
+
+      modalidadCtrl?.addValidators([Validators.required]);
+      modalidadCtrl?.enable();
     }
+
     areaCtrl?.updateValueAndValidity({ emitEvent: false });
+    escuelaCtrl?.updateValueAndValidity({ emitEvent: false });
+    modalidadCtrl?.updateValueAndValidity({ emitEvent: false });
   }
 
   private actualizarValidadoresApoderado() {
@@ -224,8 +256,8 @@ export class FormularioComponent {
     this.filialSeleccionada = filial;
     this.formularioForm.patchValue({ filial: filial?.cperjuridica || '' });
 
-    // Limpiar área/escuela cuando cambia la filial
-    this.formularioForm.patchValue({ escuela: '' });
+    // Limpiar área cuando cambia la filial
+    this.formularioForm.patchValue({ area: '' });
 
     if (filial?.cperjuridica && filial?.pS_ESTABID) {
       // Obtener el expediente real desde la API
@@ -245,16 +277,16 @@ export class FormularioComponent {
         }
       });
 
-      // Cargar departamentos/áreas para la filial seleccionada
+      // Cargar departamentos/áreas para la filial seleccionada (solo para administrativos)
       this.cargarDepartamentos(filial.pS_ESTABID);
     } else {
       this.expediente = '';
       // Limpiar opciones cuando no hay filial seleccionada
-      this.escuelaOptions.set([]);
+      this.areaOptions.set([]);
     }
   }
 
-  // Método para cargar departamentos basado en la filial
+  // Método para cargar departamentos basado en la filial (para Área/Servicio de administrativos)
   private cargarDepartamentos(estabid: string): void {
     this.defensoriaService.post_DepartamentosDU(estabid).subscribe({
       next: (response) => {
@@ -267,15 +299,15 @@ export class FormularioComponent {
               value: dept.nUniOrg
             }));
 
-          this.escuelaOptions.set(departamentos);
+          this.areaOptions.set(departamentos);
         } else {
           console.warn('No se encontraron departamentos para la filial:', estabid);
-          // Mantener opciones por defecto si no hay departamentos
+          this.areaOptions.set([]);
         }
       },
       error: (error) => {
         console.error('Error cargando departamentos:', error);
-        // Mantener opciones por defecto si falla la API
+        this.areaOptions.set([]);
       }
     });
   }
@@ -311,9 +343,11 @@ export class FormularioComponent {
     this.filialSeleccionada = null;
     this.expediente = '';
 
-    // Limpiar opciones de escuelas/áreas
-    this.escuelaOptions.set([]);
-  }  enviarFormulario() {
+    // Limpiar opciones de áreas (las escuelas están hardcodeadas)
+    this.areaOptions.set([]);
+  }
+
+  enviarFormulario() {
     // Validación adicional del grupo otraArea
     const otraAreaGrp = this.formularioForm.get('otraArea')!;
     otraAreaGrp.updateValueAndValidity();
@@ -324,7 +358,7 @@ export class FormularioComponent {
       return;
     }
 
-    // Transformar “otraArea” (booleans) a lista de áreas seleccionadas
+    // Transformar "otraArea" (booleans) a lista de áreas seleccionadas
     const otraAreaRaw = otraAreaGrp.value as Record<string, boolean>;
     const mapKeys: Record<string, string> = {
       libro: 'Libro de Reclamaciones',

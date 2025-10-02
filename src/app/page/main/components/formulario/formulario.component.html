@@ -24,8 +24,7 @@
   <form [formGroup]="formularioForm" class="space-y-8">
     <!-- Tipo de Usuario -->
     <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl">
-      <div
-        class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
+      <div class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
         <div class="flex items-center gap-3">
           <div class="flex items-center p-2 bg-[#105282] rounded-lg">
             <i class="text-lg text-white pi pi-users"></i>
@@ -59,8 +58,8 @@
           </div>
 
           <div class="relative">
-            <input type="radio" id="administrativo" name="tipoUsuario" value="21"
-              formControlName="tipoUsuario" class="sr-only peer">
+            <input type="radio" id="administrativo" name="tipoUsuario" value="21" formControlName="tipoUsuario"
+              class="sr-only peer">
             <label for="administrativo"
               class="flex items-center gap-3 p-4 transition-all border-2 border-gray-200 border-solid rounded-lg cursor-pointer hover:border-orange-300 peer-checked:border-orange-500 peer-checked:bg-orange-50">
               <i class="text-xl text-orange-600 pi pi-briefcase"></i>
@@ -116,11 +115,8 @@
               Filial <span class="text-red-500">*</span>
             </label>
 
-            <app-select-filiales
-              placeholder="Seleccione su Campus"
-              [disabled]="false"
-              [selectedValue]="filialSeleccionada"
-              (onSelectionChange)="onFilialSeleccionada($event)">
+            <app-select-filiales placeholder="Seleccione su Campus" [disabled]="false"
+              [selectedValue]="filialSeleccionada" (onSelectionChange)="onFilialSeleccionada($event)">
             </app-select-filiales>
 
             <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('filial')">
@@ -134,8 +130,7 @@
 
     <!-- Información Personal -->
     <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl">
-      <div
-        class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
+      <div class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
         <div class="flex items-center gap-3">
           <div class="flex items-center p-2 bg-[#105282] rounded-lg">
             <i class="text-lg text-white pi pi-user"></i>
@@ -188,28 +183,32 @@
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-700">
               <i class="mr-2 text-blue-600 pi pi-briefcase"></i>
-              Escuela profesional <span class="text-red-500">*</span>
+              Escuela profesional
+              <span class="text-red-500" *ngIf="formularioForm.get('tipoUsuario')?.value !== '21'">*</span>
             </label>
-            <p-select formControlName="escuelaProfesional" [options]="escuelaOptions()"
-              placeholder="Seleccione su escuela profesional" optionLabel="label" optionValue="value" [filter]="true"
-              appendTo="body" [style]="{ width: '100%' }" class="w-full" [disabled]="!hasFilialSelected">
+
+            <!-- Mostrar select solo cuando NO es administrativo -->
+            <p-select
+              *ngIf="formularioForm.get('tipoUsuario')?.value !== '21'"
+              formControlName="escuelaProfesional"
+              [options]="escuelaOptions()"
+              placeholder="Seleccione su escuela profesional"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              appendTo="body"
+              [style]="{ width: '100%' }"
+              class="w-full">
             </p-select>
 
-            <!-- Mensaje cuando no hay filial seleccionada -->
-            <div *ngIf="!hasFilialSelected" class="p-3 mt-2 border border-blue-200 rounded-lg bg-blue-50">
+            <!-- Mensaje cuando es administrativo (reemplaza el select) -->
+            <div *ngIf="formularioForm.get('tipoUsuario')?.value === '21'" class="p-3 border border-solid border-gray-300 rounded-lg bg-gray-100">
               <div class="flex items-center gap-2">
-                <i class="text-blue-600 pi pi-info-circle"></i>
-                <span class="text-sm text-blue-800">Seleccione primero una filial para ver las escuelas profesionales disponibles</span>
+                <i class="text-gray-600 pi pi-info-circle"></i>
+                <span class="text-sm text-gray-700">Este campo no es requerido para usuarios administrativos</span>
               </div>
             </div>
 
-            <!-- Mensaje cuando no hay opciones disponibles -->
-            <div *ngIf="hasFilialSelected && escuelaOptions().length === 0" class="p-3 mt-2 border border-yellow-200 rounded-lg bg-yellow-50">
-              <div class="flex items-center gap-2">
-                <i class="text-yellow-600 pi pi-exclamation-triangle"></i>
-                <span class="text-sm text-yellow-800">No hay escuelas profesionales disponibles para esta filial</span>
-              </div>
-            </div>
             <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('escuelaProfesional')">
               <i class="mr-1 pi pi-exclamation-circle"></i>
               Seleccione su escuela profesional.
@@ -219,10 +218,13 @@
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-700">
               <i class="mr-2 text-blue-600 pi pi-sliders-h"></i>
-              Modalidad <span class="text-red-500">*</span>
+              Modalidad
+              <span class="text-red-500" *ngIf="formularioForm.get('tipoUsuario')?.value !== '21'">*</span>
             </label>
 
+            <!-- Mostrar select solo cuando NO es administrativo -->
             <p-select
+              *ngIf="formularioForm.get('tipoUsuario')?.value !== '21'"
               formControlName="modalidad"
               [options]="modalidadOptions()"
               placeholder="Seleccione la modalidad"
@@ -234,16 +236,24 @@
               [loading]="modalidadesLoading()">
             </p-select>
 
-            <!-- Mensaje cuando está cargando -->
-            <div *ngIf="modalidadesLoading()" class="p-3 mt-2 border border-blue-200 rounded-lg bg-blue-50">
+            <!-- Mensaje cuando es administrativo (reemplaza el select) -->
+            <div *ngIf="formularioForm.get('tipoUsuario')?.value === '21'" class="p-3 border border-solid border-gray-300 rounded-lg bg-gray-100">
+              <div class="flex items-center gap-2">
+                <i class="text-gray-600 pi pi-info-circle"></i>
+                <span class="text-sm text-gray-700">Este campo no es requerido para usuarios administrativos</span>
+              </div>
+            </div>
+
+            <!-- Mensaje cuando está cargando (solo si NO es administrativo) -->
+            <div *ngIf="modalidadesLoading() && formularioForm.get('tipoUsuario')?.value !== '21'" class="p-3 mt-2 border border-blue-200 rounded-lg bg-blue-50">
               <div class="flex items-center gap-2">
                 <i class="text-blue-600 pi pi-spin pi-spinner"></i>
                 <span class="text-sm text-blue-800">Cargando modalidades...</span>
               </div>
             </div>
 
-            <!-- Mensaje cuando no hay opciones disponibles -->
-            <div *ngIf="!modalidadesLoading() && modalidadOptions().length === 0" class="p-3 mt-2 border border-yellow-200 rounded-lg bg-yellow-50">
+            <!-- Mensaje cuando no hay opciones disponibles (solo si NO es administrativo) -->
+            <div *ngIf="!modalidadesLoading() && modalidadOptions().length === 0 && formularioForm.get('tipoUsuario')?.value !== '21'" class="p-3 mt-2 border border-yellow-200 rounded-lg bg-yellow-50">
               <div class="flex items-center gap-2">
                 <i class="text-yellow-600 pi pi-exclamation-triangle"></i>
                 <span class="text-sm text-yellow-800">No hay modalidades disponibles</span>
@@ -310,7 +320,8 @@
               <i class="mr-2 text-amber-600 pi pi-user"></i>
               Apellidos <span class="text-red-500">*</span>
             </label>
-            <input pInputText formControlName="apoderadoApellidos" placeholder="Apellidos del apoderado" class="w-full" />
+            <input pInputText formControlName="apoderadoApellidos" placeholder="Apellidos del apoderado"
+              class="w-full" />
             <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('apoderadoApellidos')">
               <i class="mr-1 pi pi-exclamation-circle"></i> Campo obligatorio.
             </p>
@@ -342,18 +353,17 @@
       </div>
     </div>
 
-    <!-- Información Laboral -->
+    <!-- Información Laboral (SOLO PARA ADMINISTRATIVOS) -->
     <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl"
-      *ngIf="formularioForm.get('tipoUsuario')?.value === 'administrativo'">
-      <div
-        class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
+      *ngIf="formularioForm.get('tipoUsuario')?.value === '21'">
+      <div class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
         <div class="flex items-center gap-3">
           <div class="flex items-center p-2 bg-[#105282] rounded-lg">
             <i class="text-lg text-white pi pi-building"></i>
           </div>
           <div>
             <h2 class="text-lg font-semibold text-gray-800">Información Laboral</h2>
-            <p class="text-sm text-gray-600">Especifique su área</p>
+            <p class="text-sm text-gray-600">Especifique su área de trabajo</p>
           </div>
         </div>
       </div>
@@ -364,7 +374,7 @@
               <i class="mr-2 text-blue-600 pi pi-home"></i>
               Área/Servicio <span class="text-red-500">*</span>
             </label>
-            <p-select formControlName="escuela" [options]="escuelaOptions()" placeholder="Seleccione su Área / Servicio"
+            <p-select formControlName="area" [options]="areaOptions()" placeholder="Seleccione su Área / Servicio"
               optionLabel="label" optionValue="value" [filter]="true" appendTo="body" [style]="{ width: '100%' }"
               class="w-full" [disabled]="!hasFilialSelected">
             </p-select>
@@ -373,19 +383,21 @@
             <div *ngIf="!hasFilialSelected" class="p-3 mt-2 border border-blue-200 rounded-lg bg-blue-50">
               <div class="flex items-center gap-2">
                 <i class="text-blue-600 pi pi-info-circle"></i>
-                <span class="text-sm text-blue-800">Seleccione primero una filial para ver las áreas/servicios disponibles</span>
+                <span class="text-sm text-blue-800">Seleccione primero una filial para ver las áreas/servicios
+                  disponibles</span>
               </div>
             </div>
 
             <!-- Mensaje cuando no hay opciones disponibles -->
-            <div *ngIf="hasFilialSelected && escuelaOptions().length === 0" class="p-3 mt-2 border border-yellow-200 rounded-lg bg-yellow-50">
+            <div *ngIf="hasFilialSelected && areaOptions().length === 0"
+              class="p-3 mt-2 border border-yellow-200 rounded-lg bg-yellow-50">
               <div class="flex items-center gap-2">
                 <i class="text-yellow-600 pi pi-exclamation-triangle"></i>
                 <span class="text-sm text-yellow-800">No hay áreas/servicios disponibles para esta filial</span>
               </div>
             </div>
 
-            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('escuela')">
+            <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('area')">
               <i class="mr-1 pi pi-exclamation-circle"></i>
               Seleccione una opción.
             </p>
@@ -396,8 +408,7 @@
 
     <!-- ¿Se ingresó a otra área? -->
     <div class="overflow-hidden bg-white border border-gray-200 border-solid shadow-sm rounded-xl">
-      <div
-        class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
+      <div class="px-6 py-4 border-0 border-b border-gray-400 border-solid bg-[#ddeaf3]">
         <div class="flex items-center gap-3">
           <div class="flex items-center p-2 bg-[#105282] rounded-lg">
             <i class="text-lg text-white pi pi-inbox"></i>
