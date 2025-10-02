@@ -188,23 +188,15 @@
             </label>
 
             <!-- Mostrar select solo cuando NO es administrativo -->
-            <p-select
-              *ngIf="formularioForm.get('tipoUsuario')?.value !== '21'"
-              formControlName="escuelaProfesional"
-              [options]="escuelaOptions()"
-              placeholder="Seleccione su escuela profesional"
-              optionLabel="label"
-              optionValue="value"
-              [filter]="true"
-              appendTo="body"
-              [style]="{ width: '100%' }"
-              class="w-full"
-              [loading]="escuelasLoading()"
-              [disabled]="!hasFilialSelected">
+            <p-select *ngIf="formularioForm.get('tipoUsuario')?.value !== '21'" formControlName="escuelaProfesional"
+              [options]="escuelaOptions()" placeholder="Seleccione su escuela profesional" optionLabel="label"
+              optionValue="value" [filter]="true" appendTo="body" [style]="{ width: '100%' }" class="w-full"
+              [loading]="escuelasLoading()" [disabled]="!hasFilialSelected">
             </p-select>
 
             <!-- Mensaje cuando es administrativo (reemplaza el select) -->
-            <div *ngIf="formularioForm.get('tipoUsuario')?.value === '21'" class="p-3 bg-gray-100 border border-gray-300 border-solid rounded-lg">
+            <div *ngIf="formularioForm.get('tipoUsuario')?.value === '21'"
+              class="p-3 bg-gray-100 border border-gray-300 border-solid rounded-lg">
               <div class="flex items-center gap-2">
                 <i class="text-gray-600 pi pi-info-circle"></i>
                 <span class="text-sm text-gray-700">Este campo no es requerido para usuarios administrativos</span>
@@ -212,15 +204,18 @@
             </div>
 
             <!-- Mensaje cuando no hay filial seleccionada -->
-            <div *ngIf="!hasFilialSelected && formularioForm.get('tipoUsuario')?.value !== '21'" class="p-3 mt-2 border border-blue-200 rounded-lg bg-blue-50">
+            <div *ngIf="!hasFilialSelected && formularioForm.get('tipoUsuario')?.value !== '21'"
+              class="p-3 mt-2 border border-blue-200 rounded-lg bg-blue-50">
               <div class="flex items-center gap-2">
                 <i class="text-blue-600 pi pi-info-circle"></i>
-                <span class="text-sm text-blue-800">Seleccione primero una filial para ver las escuelas profesionales disponibles</span>
+                <span class="text-sm text-blue-800">Seleccione primero una filial para ver las escuelas profesionales
+                  disponibles</span>
               </div>
             </div>
 
             <!-- Mensaje cuando está cargando -->
-            <div *ngIf="escuelasLoading() && formularioForm.get('tipoUsuario')?.value !== '21'" class="p-3 mt-2 border border-blue-200 rounded-lg bg-blue-50">
+            <div *ngIf="escuelasLoading() && formularioForm.get('tipoUsuario')?.value !== '21'"
+              class="p-3 mt-2 border border-blue-200 rounded-lg bg-blue-50">
               <div class="flex items-center gap-2">
                 <i class="text-blue-600 pi pi-spin pi-spinner"></i>
                 <span class="text-sm text-blue-800">Cargando escuelas profesionales...</span>
@@ -228,7 +223,9 @@
             </div>
 
             <!-- Mensaje cuando no hay opciones disponibles -->
-            <div *ngIf="!escuelasLoading() && hasFilialSelected && escuelaOptions().length === 0 && formularioForm.get('tipoUsuario')?.value !== '21'" class="p-3 mt-2 border border-yellow-200 rounded-lg bg-yellow-50">
+            <div
+              *ngIf="!escuelasLoading() && hasFilialSelected && escuelaOptions().length === 0 && formularioForm.get('tipoUsuario')?.value !== '21'"
+              class="p-3 mt-2 border border-yellow-200 rounded-lg bg-yellow-50">
               <div class="flex items-center gap-2">
                 <i class="text-yellow-600 pi pi-exclamation-triangle"></i>
                 <span class="text-sm text-yellow-800">No hay escuelas profesionales disponibles para esta filial</span>
@@ -249,21 +246,15 @@
             </label>
 
             <!-- Mostrar select solo cuando NO es administrativo -->
-            <p-select
-              *ngIf="formularioForm.get('tipoUsuario')?.value !== '21'"
-              formControlName="modalidad"
-              [options]="modalidadOptions()"
-              placeholder="Seleccione la modalidad"
-              optionLabel="label"
-              optionValue="value"
-              appendTo="body"
-              [style]="{ width: '100%' }"
-              class="w-full"
+            <p-select *ngIf="formularioForm.get('tipoUsuario')?.value !== '21'" formControlName="modalidad"
+              [options]="modalidadOptions()" placeholder="Seleccione la modalidad" optionLabel="label"
+              optionValue="value" appendTo="body" [style]="{ width: '100%' }" class="w-full"
               [loading]="modalidadesLoading()">
             </p-select>
 
             <!-- Mensaje cuando es administrativo (reemplaza el select) -->
-            <div *ngIf="formularioForm.get('tipoUsuario')?.value === '21'" class="p-3 bg-gray-100 border border-gray-300 border-solid rounded-lg">
+            <div *ngIf="formularioForm.get('tipoUsuario')?.value === '21'"
+              class="p-3 bg-gray-100 border border-gray-300 border-solid rounded-lg">
               <div class="flex items-center gap-2">
                 <i class="text-gray-600 pi pi-info-circle"></i>
                 <span class="text-sm text-gray-700">Este campo no es requerido para usuarios administrativos</span>
@@ -271,7 +262,8 @@
             </div>
 
             <!-- Mensaje cuando está cargando (solo si NO es administrativo) -->
-            <div *ngIf="modalidadesLoading() && formularioForm.get('tipoUsuario')?.value !== '21'" class="p-3 mt-2 border border-blue-200 rounded-lg bg-blue-50">
+            <div *ngIf="modalidadesLoading() && formularioForm.get('tipoUsuario')?.value !== '21'"
+              class="p-3 mt-2 border border-blue-200 rounded-lg bg-blue-50">
               <div class="flex items-center gap-2">
                 <i class="text-blue-600 pi pi-spin pi-spinner"></i>
                 <span class="text-sm text-blue-800">Cargando modalidades...</span>
@@ -279,7 +271,9 @@
             </div>
 
             <!-- Mensaje cuando no hay opciones disponibles (solo si NO es administrativo) -->
-            <div *ngIf="!modalidadesLoading() && modalidadOptions().length === 0 && formularioForm.get('tipoUsuario')?.value !== '21'" class="p-3 mt-2 border border-yellow-200 rounded-lg bg-yellow-50">
+            <div
+              *ngIf="!modalidadesLoading() && modalidadOptions().length === 0 && formularioForm.get('tipoUsuario')?.value !== '21'"
+              class="p-3 mt-2 border border-yellow-200 rounded-lg bg-yellow-50">
               <div class="flex items-center gap-2">
                 <i class="text-yellow-600 pi pi-exclamation-triangle"></i>
                 <span class="text-sm text-yellow-800">No hay modalidades disponibles</span>
@@ -590,65 +584,125 @@
           </div>
           <div>
             <h2 class="text-lg font-semibold text-gray-800">Adjuntar Evidencias</h2>
-            <p class="text-sm text-gray-600">Archivos de respaldo opcionales</p>
+            <p class="text-sm text-gray-600">
+              Opcional - Puedes adjuntar de 0 a {{ MAX_FILES }} archivos
+            </p>
           </div>
         </div>
       </div>
+
       <div class="p-6">
-        <div class="p-4 mb-4 border border-yellow-200 border-solid rounded-lg bg-yellow-50">
+        <!-- Información sobre archivos -->
+        <div class="p-4 mb-6 border border-blue-200 border-solid rounded-lg bg-blue-50">
           <div class="flex items-start gap-3">
-            <i class="pi pi-info-circle text-yellow-600 text-lg mt-0.5"></i>
-            <div class="text-sm text-yellow-800">
-              <p class="mb-1 font-medium">Información sobre archivos:</p>
-              <ul class="space-y-1 text-yellow-700">
-                <li>• Formatos permitidos: PDF, JPG, JPEG, PNG</li>
-                <li>• Tamaño máximo: 10 MB por archivo</li>
-                <li>• Límite: hasta 5 archivos</li>
+            <i class="pi pi-info-circle text-blue-600 text-lg mt-0.5"></i>
+            <div class="text-sm text-blue-800">
+              <p class="mb-2 font-medium">Información sobre archivos adjuntos:</p>
+              <ul class="space-y-1 text-blue-700">
+                <li>• <strong>Opcional:</strong> No es obligatorio adjuntar archivos</li>
+                <li>• <strong>Formatos permitidos:</strong> PDF, Word, Imágenes, Audio y Video</li>
+                <li>• <strong>Tamaño máximo:</strong> {{ formatSize(MAX_FILE_SIZE) }} por archivo</li>
+                <li>• <strong>Cantidad:</strong> Puedes subir hasta {{ MAX_FILES }} archivos</li>
               </ul>
             </div>
           </div>
         </div>
 
-        <p-fileUpload name="evidencias[]" mode="advanced" [multiple]="true" [maxFileSize]="10 * 1024 * 1024"
-          [fileLimit]="5" accept=".pdf,.jpg,.jpeg,.png" [customUpload]="true" (uploadHandler)="onUpload($event)"
-          chooseIcon="pi pi-upload" [showCancelButton]="false" [showUploadButton]="true" [auto]="false"
-          styleClass="w-full">
-          <ng-template pTemplate="content">
-            <div
-              class="p-8 text-center transition-colors border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 hover:bg-gray-100">
-              <i class="mb-4 text-4xl text-gray-400 pi pi-cloud-upload"></i>
-              <p class="mb-2 text-lg font-medium text-gray-700">
-                Arrastre y suelte archivos aquí
-              </p>
-              <p class="text-sm text-gray-500">
-                o haga clic en <span class="font-semibold text-teal-600">Subir</span> para seleccionar
-              </p>
-            </div>
-          </ng-template>
-        </p-fileUpload>
+        <!-- FileUpload Component -->
+        <div class="space-y-4">
+          <!-- Botón para seleccionar archivos -->
+          <div class="flex justify-center">
+            <p-fileupload mode="basic" name="files[]"
+              [chooseLabel]="canUploadMore ? 'Seleccionar Archivos (' + selectedFiles.length + '/' + MAX_FILES + ')' : 'Límite Alcanzado'"
+              chooseIcon="pi pi-upload" [auto]="true" [multiple]="true" [maxFileSize]="MAX_FILE_SIZE"
+              [disabled]="!canUploadMore" (onSelect)="onFileSelect($event)" [showUploadButton]="false"
+              [showCancelButton]="false" styleClass="w-full">
+            </p-fileupload>
+          </div>
 
-        <!-- Lista de archivos seleccionados -->
-        <div *ngIf="selectedFiles.length" class="mt-6">
-          <h4 class="flex items-center gap-2 mb-3 text-sm font-semibold text-gray-700">
-            <i class="text-teal-600 pi pi-list"></i>
-            Archivos seleccionados ({{ selectedFiles.length }})
-          </h4>
-          <div class="space-y-2">
-            <div *ngFor="let f of selectedFiles; index as i"
-              class="flex items-center justify-between p-3 transition-colors border border-gray-200 border-solid rounded-lg bg-gray-50 hover:bg-gray-100">
-              <div class="flex items-center flex-1 min-w-0 gap-3">
-                <i class="text-lg text-gray-500 pi pi-file"></i>
-                <div class="flex-1 min-w-0">
-                  <p class="text-sm font-medium text-gray-700 truncate">{{ f.name }}</p>
-                  <p class="text-xs text-gray-500">{{ f.size | number }} bytes</p>
+          <!-- Mensaje cuando se alcanza el límite -->
+          <div *ngIf="!canUploadMore" class="p-4 border border-orange-200 rounded-lg bg-orange-50">
+            <div class="flex items-center gap-3">
+              <i class="text-lg text-orange-600 pi pi-exclamation-triangle"></i>
+              <div>
+                <p class="font-medium text-orange-800">Límite de archivos alcanzado</p>
+                <p class="text-sm text-orange-700">
+                  Has alcanzado el máximo de {{ MAX_FILES }} archivos permitidos.
+                  Elimina algún archivo si deseas agregar otro.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lista de archivos seleccionados -->
+          <div *ngIf="selectedFiles.length > 0" class="space-y-4">
+            <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg bg-gray-50">
+              <div class="flex items-center gap-2">
+                <i class="text-blue-600 pi pi-check-circle"></i>
+                <span class="font-medium text-gray-700">
+                  {{ selectedFiles.length }} archivo(s) adjuntado(s)
+                </span>
+                <span class="text-sm text-gray-500">
+                  ({{ totalSize }})
+                </span>
+              </div>
+              <p-button label="Limpiar todos" icon="pi pi-trash" severity="danger" size="small" [outlined]="true"
+                (onClick)="onClearFiles()">
+              </p-button>
+            </div>
+
+            <!-- Tarjetas de archivos -->
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div *ngFor="let file of selectedFiles; let i = index"
+                class="relative flex flex-col p-4 transition-all border border-gray-200 border-solid rounded-lg hover:shadow-md hover:border-blue-300">
+
+                <!-- Botón eliminar (esquina superior derecha) -->
+                <button type="button" (click)="onRemoveFile(i)"
+                  class="absolute flex items-center justify-center w-8 h-8 transition-colors bg-red-100 rounded-full top-2 right-2 hover:bg-red-200"
+                  [title]="'Eliminar ' + file.name">
+                  <i class="text-red-600 pi pi-times"></i>
+                </button>
+
+                <!-- Contenido del archivo -->
+                <div class="flex items-start gap-3">
+                  <!-- Ícono del archivo -->
+                  <div class="flex items-center justify-center flex-shrink-0 w-12 h-12 rounded-lg bg-blue-50">
+                    <i [class]="'text-2xl text-blue-600 pi ' + getFileIcon(file.name)"></i>
+                  </div>
+
+                  <!-- Información del archivo -->
+                  <div class="flex-1 min-w-0">
+                    <p class="mb-1 text-sm font-medium text-gray-800 truncate" [title]="file.name">
+                      {{ file.name }}
+                    </p>
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                      <span>{{ formatSize(file.size) }}</span>
+                      <span>•</span>
+                      <p-badge [value]="getFileExtension(file.name)" [severity]="getFileBadgeSeverity(file.name)">
+                      </p-badge>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Preview para imágenes -->
+                <div *ngIf="isImage(file.name)" class="mt-3">
+                  <img [src]="file.objectURL" [alt]="file.name"
+                    class="object-cover w-full h-32 border border-gray-200 border-solid rounded-lg">
                 </div>
               </div>
-              <button type="button"
-                class="px-3 py-1 text-sm font-semibold text-red-600 transition-colors rounded hover:text-red-700 hover:bg-red-50"
-                (click)="removeSelected(i)">
-                <i class="mr-1 pi pi-times"></i>
-                Quitar
-              </button>
+            </div>
+          </div>
+
+          <!-- Mensaje cuando no hay archivos -->
+          <div *ngIf="selectedFiles.length === 0" class="p-8 text-center border-2 border-gray-200 border-dashed rounded-lg">
+            <div class="flex flex-col items-center gap-3">
+              <div class="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full">
+                <i class="text-3xl text-gray-400 pi pi-cloud-upload"></i>
+              </div>
+              <div>
+                <p class="font-medium text-gray-700">No hay archivos adjuntos</p>
+                <p class="text-sm text-gray-500">Los archivos son opcionales. Puedes continuar sin adjuntar evidencias.</p>
+              </div>
             </div>
           </div>
         </div>

@@ -9,6 +9,7 @@ import { ExpedienteDU } from '../interface/expediente.interface';
 import { DepartamentoDU } from '../interface/departamento.interface';
 import { ModalidadDU } from '../interface/modalidad.interface';
 import { UnidadAcademicaDU } from '../interface/unidad-academica.interface';
+import { RegistroExpedienteDU, RegistroExpedienteResponse } from '../interface/registro-expediente.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -62,7 +63,10 @@ export class DefensoriaUniversitariaService extends GlobalService {
     });
   }
 
-  // Métodos para Modalidades
+  /**
+   * Obtiene el listado de modalidades
+   * @returns Observable con la respuesta de la API
+   */
   get_ModalidadesDU(): Observable<HttpResponse<ResponseResultLst<ModalidadDU>>> {
     const url = this.ApiDefensoriaUniversitaria.url + this.ApiDefensoriaUniversitaria.endpoints.Du_ModalidadesDU;
     return this._http.get<ResponseResultLst<ModalidadDU>>(url, {
@@ -71,12 +75,30 @@ export class DefensoriaUniversitariaService extends GlobalService {
     });
   }
 
-  // Métodos para Unidades Académicas
+  /**
+   * Obtiene las unidades académicas (escuelas profesionales) para una filial específica
+   * @param cperjuridica Código de persona jurídica de la filial
+   * @returns Observable con la respuesta de la API
+   */
   post_UnidadesAcademicasDU(cperjuridica: string): Observable<HttpResponse<ResponseResultLst<UnidadAcademicaDU>>> {
     const url = this.ApiDefensoriaUniversitaria.url + this.ApiDefensoriaUniversitaria.endpoints.Du_UnidadesAcademicasDU;
     const body = { cperjuridica };
 
     return this._http.post<ResponseResultLst<UnidadAcademicaDU>>(url, body, {
+      headers: this.headers_a_json,
+      observe: 'response',
+    });
+  }
+
+  /**
+   * Registra un expediente de denuncia o reclamo
+   * @param data Datos del expediente a registrar
+   * @returns Observable con la respuesta de la API
+   */
+  post_RegistrarExpedienteDU(data: RegistroExpedienteDU): Observable<HttpResponse<ResponseResultItem<RegistroExpedienteResponse>>> {
+    const url = this.ApiDefensoriaUniversitaria.url + this.ApiDefensoriaUniversitaria.endpoints.Du_RegistrarExpedienteDU;
+
+    return this._http.post<ResponseResultItem<RegistroExpedienteResponse>>(url, data, {
       headers: this.headers_a_json,
       observe: 'response',
     });

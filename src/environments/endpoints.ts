@@ -13,6 +13,7 @@ export const routes = {
 			Du_DepartamentosDU: 'DUSevicioWeb/DepartamentosDU',
 			Du_ModalidadesDU: 'DUSevicioWeb/ModalidadesDU',
 			Du_UnidadesAcademicasDU: 'DUSevicioWeb/UnidadesAcademicasDU',
+			Du_RegistrarExpedienteDU: 'DUSevicioWeb/RegistrarExpedienteDU',
 		}
 	}
 };

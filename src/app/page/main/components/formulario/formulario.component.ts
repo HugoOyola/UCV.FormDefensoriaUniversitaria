@@ -7,17 +7,25 @@ import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
-import { FileUploadModule, FileUploadHandlerEvent } from 'primeng/fileupload';
+import { FileUploadModule } from 'primeng/fileupload';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
+import { BadgeModule } from 'primeng/badge';
 import { SelectFilialesComponent } from '../../../../core/shared/components/select-filiales/select-filiales.component';
 import { DefensoriaUniversitariaService } from '../../services/defensoria-universitaria.service';
 import { CampusDU } from '../../interface/campus.interface';
-import { ModalidadDU } from '../../interface/modalidad.interface';
+import { RegistroExpedienteDU } from '../../interface/registro-expediente.interface';
 
 type OptionEscuela = { label: string; value: string };
 type OptionModalidad = { label: string; value: number };
 type OptionArea = { label: string; value: string };
+
+interface UploadedFile {
+  name: string;
+  size: number;
+  objectURL: string;
+  file: File;
+}
 
 @Component({
   selector: 'app-formulario',
@@ -34,6 +42,7 @@ type OptionArea = { label: string; value: string };
     FileUploadModule,
     RadioButtonModule,
     CheckboxModule,
+    BadgeModule,
     SelectFilialesComponent
   ],
   templateUrl: './formulario.component.html',
@@ -45,7 +54,8 @@ export class FormularioComponent implements OnInit {
   today = new Date();
   currentYear = this.today.getFullYear();
   expediente = '';
-  idExpediente = 0; // Guardar el ID del expediente desde la API
+  idExpediente = 0;
+  correoFilial = '';
 
   private correlativos = new Map<string, number>();
 
@@ -57,15 +67,39 @@ export class FormularioComponent implements OnInit {
   modalidadOptions = signal<OptionModalidad[]>([]);
   modalidadesLoading = signal(false);
 
-  selectedFiles: File[] = [];
+  // Sistema de archivos mejorado
+  selectedFiles: UploadedFile[] = [];
   submitting = signal(false);
   filialSeleccionada: CampusDU | null = null;
+
+  // Límites para archivos
+  readonly MAX_FILE_SIZE = 10485760; // 10 MB en bytes
+  readonly MAX_FILES = 3;
+  readonly ALLOWED_EXTENSIONS = [
+    // Documentos
+    '.pdf', '.doc', '.docx', '.txt', '.odt',
+    // Imágenes
+    '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp',
+    // Audio
+    '.mp3', '.wav', '.ogg', '.m4a',
+    // Video
+    '.mp4', '.avi', '.mov', '.wmv', '.mkv', '.webm'
+  ];
 
   get hasFilialSelected(): boolean {
     return this.filialSeleccionada !== null;
   }
 
-  // Mapeo corregido: key del checkbox -> valor numérico a enviar
+  get canUploadMore(): boolean {
+    return this.selectedFiles.length < this.MAX_FILES;
+  }
+
+  get totalSize(): string {
+    const total = this.selectedFiles.reduce((sum, file) => sum + file.size, 0);
+    return this.formatSize(total);
+  }
+
+  // Mapeo: key del checkbox -> valor numérico a enviar
   private readonly OTRA_AREA_VALUES: Record<string, number> = {
     libro: 1,
     tribunal: 2,
@@ -76,7 +110,10 @@ export class FormularioComponent implements OnInit {
     otro: 7
   };
 
-  constructor(private fb: FormBuilder, private defensoriaService: DefensoriaUniversitariaService) {
+  constructor(
+    private fb: FormBuilder,
+    private defensoriaService: DefensoriaUniversitariaService
+  ) {
     this.formularioForm = this.fb.group({
       filial: ['', Validators.required],
       tipoUsuario: ['', Validators.required],
@@ -107,6 +144,14 @@ export class FormularioComponent implements OnInit {
       otraAreaOtro: ['']
     });
 
+    this.setupFormSubscriptions();
+  }
+
+  ngOnInit(): void {
+    this.cargarModalidades();
+  }
+
+  private setupFormSubscriptions(): void {
     this.formularioForm.get('tipoUsuario')?.valueChanges.subscribe(() => {
       this.actualizarValidadoresSegunTipoUsuario();
     });
@@ -122,10 +167,6 @@ export class FormularioComponent implements OnInit {
     this.actualizarValidadoresSegunTipoUsuario();
     this.actualizarValidadoresApoderado();
     this.actualizarValidadoresOtraArea();
-  }
-
-  ngOnInit(): void {
-    this.cargarModalidades();
   }
 
   private cargarEscuelasProfesionales(cperjuridica: string): void {
@@ -184,6 +225,30 @@ export class FormularioComponent implements OnInit {
     });
   }
 
+  private cargarDepartamentos(estabid: string): void {
+    this.defensoriaService.post_DepartamentosDU(estabid).subscribe({
+      next: (response) => {
+        if (response.body?.isSuccess && response.body.lstItem) {
+          const departamentos = response.body.lstItem
+            .filter(dept => dept.cUniOrgNombre && dept.cUniOrgNombre.trim().length > 0)
+            .sort((a, b) => a.cUniOrgNombre.localeCompare(b.cUniOrgNombre, 'es', { sensitivity: 'base' }))
+            .map(dept => ({
+              label: dept.cUniOrgNombre,
+              value: dept.nUniOrg
+            }));
+
+          this.areaOptions.set(departamentos);
+        } else {
+          this.areaOptions.set([]);
+        }
+      },
+      error: (error) => {
+        console.error('Error cargando departamentos:', error);
+        this.areaOptions.set([]);
+      }
+    });
+  }
+
   private alMenosUnaSeleccion() {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value as Record<string, boolean>;
@@ -228,7 +293,6 @@ export class FormularioComponent implements OnInit {
 
   private actualizarValidadoresApoderado() {
     const isAp = this.formularioForm.get('isApoderado')?.value;
-
     const ape = this.formularioForm.get('apoderadoApellidos');
     const nom = this.formularioForm.get('apoderadoNombres');
     const mail = this.formularioForm.get('apoderadoEmail');
@@ -275,17 +339,17 @@ export class FormularioComponent implements OnInit {
     this.areaOptions.set([]);
 
     if (filial?.cperjuridica && filial?.pS_ESTABID) {
-      // Obtener AMBOS valores del expediente desde la API
       this.defensoriaService.post_NumeroExpedienteDU(filial.cperjuridica).subscribe({
         next: (response) => {
           if (response.body?.isSuccess && response.body.item) {
-            // Guardar ambos valores: ID numérico y código string
             this.idExpediente = parseInt(response.body.item.nroExpediente) || 0;
             this.expediente = response.body.item.codigoExpediente;
+            this.correoFilial = response.body.item.correoExpediente || '';
 
-            console.log('📋 Expediente obtenido:', {
+            console.log('Expediente obtenido:', {
               idExpediente: this.idExpediente,
-              codigoExpediente: this.expediente
+              codigoExpediente: this.expediente,
+              correoFilial: this.correoFilial
             });
           } else {
             this.generarExpedienteLocal(filial);
@@ -302,31 +366,8 @@ export class FormularioComponent implements OnInit {
     } else {
       this.expediente = '';
       this.idExpediente = 0;
+      this.correoFilial = '';
     }
-  }
-
-  private cargarDepartamentos(estabid: string): void {
-    this.defensoriaService.post_DepartamentosDU(estabid).subscribe({
-      next: (response) => {
-        if (response.body?.isSuccess && response.body.lstItem) {
-          const departamentos = response.body.lstItem
-            .filter(dept => dept.cUniOrgNombre && dept.cUniOrgNombre.trim().length > 0)
-            .sort((a, b) => a.cUniOrgNombre.localeCompare(b.cUniOrgNombre, 'es', { sensitivity: 'base' }))
-            .map(dept => ({
-              label: dept.cUniOrgNombre,
-              value: dept.nUniOrg
-            }));
-
-          this.areaOptions.set(departamentos);
-        } else {
-          this.areaOptions.set([]);
-        }
-      },
-      error: (error) => {
-        console.error('Error cargando departamentos:', error);
-        this.areaOptions.set([]);
-      }
-    });
   }
 
   private generarExpedienteLocal(filial: CampusDU): void {
@@ -334,8 +375,9 @@ export class FormularioComponent implements OnInit {
     const current = this.correlativos.get(exp) || 0;
     const next = current + 1;
     this.correlativos.set(exp, next);
-    this.idExpediente = next; // También actualizar el ID
+    this.idExpediente = next;
     this.expediente = `EXPE-${exp}-${next.toString().padStart(4, '0')}`;
+    this.correoFilial = '';
   }
 
   isInvalid(controlName: string): boolean {
@@ -343,21 +385,211 @@ export class FormularioComponent implements OnInit {
     return !!ctrl && ctrl.invalid && (ctrl.touched || ctrl.dirty);
   }
 
-  onUpload(event: FileUploadHandlerEvent) {
-    const incoming = (event.files ?? []) as File[];
-    this.selectedFiles = [...this.selectedFiles, ...incoming];
+  // ========== MÉTODOS PARA MANEJO DE ARCHIVOS ==========
+
+  // Maneja la selección de archivos
+  onFileSelect(event: any): void {
+    let files: File[] = [];
+
+    console.log('=== ARCHIVOS SELECCIONADOS ===');
+    console.log('Evento recibido:', event);
+
+    // Priorizar currentFiles si existe (contiene los archivos acumulados)
+    if (event.currentFiles && Array.isArray(event.currentFiles)) {
+      files = event.currentFiles;
+    }
+    // Si no, intentar con event.files (puede ser FileList o Array)
+    else if (event.files) {
+      // Convertir FileList a Array si es necesario
+      if (event.files instanceof FileList) {
+        files = Array.from(event.files);
+      } else if (Array.isArray(event.files)) {
+        files = event.files;
+      } else {
+        files = [event.files];
+      }
+    }
+
+    console.log(`Total de archivos en el evento: ${files.length}`);
+
+    files.forEach((file, index) => {
+      // Validar que el archivo sea válido
+      if (!file || !file.name) {
+        console.warn(`Archivo ${index + 1}: Objeto de archivo inválido`, file);
+        return;
+      }
+
+      // Verificar si el archivo ya existe en la lista
+      const existeArchivo = this.selectedFiles.some(f =>
+        f.name === file.name && f.size === file.size
+      );
+
+      if (existeArchivo) {
+        console.warn(`Archivo "${file.name}" ya está en la lista`);
+        return;
+      }
+
+      // Validar límite de archivos
+      if (this.selectedFiles.length >= this.MAX_FILES) {
+        console.warn(`No se puede agregar más archivos. Límite: ${this.MAX_FILES}`);
+        return;
+      }
+
+      // Validar tamaño
+      if (file.size > this.MAX_FILE_SIZE) {
+        console.error(`Archivo "${file.name}" excede el tamaño máximo de ${this.formatSize(this.MAX_FILE_SIZE)}`);
+        return;
+      }
+
+      // Validar extensión
+      const extension = '.' + file.name.split('.').pop()?.toLowerCase();
+      if (!this.ALLOWED_EXTENSIONS.includes(extension)) {
+        console.error(`Archivo "${file.name}" tiene una extensión no permitida`);
+        return;
+      }
+
+      // Crear URL del objeto para preview
+      const objectURL = URL.createObjectURL(file);
+
+      const uploadedFile: UploadedFile = {
+        name: file.name,
+        size: file.size,
+        objectURL: objectURL,
+        file: file
+      };
+
+      this.selectedFiles.push(uploadedFile);
+
+      console.log(`✓ Archivo ${index + 1} agregado:`, {
+        nombre: file.name,
+        tamaño: this.formatSize(file.size),
+        tipo: file.type,
+        extensión: extension
+      });
+    });
+
+    console.log(`Total archivos seleccionados: ${this.selectedFiles.length}`);
+    console.log('Tamaño total:', this.totalSize);
   }
 
-  removeSelected(index: number) {
+  // Elimina un archivo de la lista
+  onRemoveFile(index: number): void {
+    const removedFile = this.selectedFiles[index];
+
+    console.log('=== ELIMINANDO ARCHIVO ===');
+    console.log(`Archivo: ${removedFile.name}`);
+    console.log(`Tamaño: ${this.formatSize(removedFile.size)}`);
+
+    // Liberar memoria del objectURL
+    URL.revokeObjectURL(removedFile.objectURL);
+
     this.selectedFiles.splice(index, 1);
-    this.selectedFiles = [...this.selectedFiles];
+
+    console.log(`Archivos restantes: ${this.selectedFiles.length}`);
   }
+
+  // Limpia todos los archivos
+  onClearFiles(): void {
+    console.log('=== LIMPIANDO TODOS LOS ARCHIVOS ===');
+    console.log(`Total archivos eliminados: ${this.selectedFiles.length}`);
+
+    // Liberar memoria de todos los objectURLs
+    this.selectedFiles.forEach(file => {
+      URL.revokeObjectURL(file.objectURL);
+    });
+
+    this.selectedFiles = [];
+  }
+
+  // Formatea el tamaño del archivo a formato legible
+  formatSize(bytes: number): string {
+    if (bytes === 0) return '0 B';
+
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  // Obtiene el ícono según el tipo de archivo
+  getFileIcon(fileName: string): string {
+    if (!fileName) return 'pi-file';
+
+    const extension = fileName.split('.').pop()?.toLowerCase();
+
+    const iconMap: Record<string, string> = {
+      // Documentos
+      'pdf': 'pi-file-pdf',
+      'doc': 'pi-file-word',
+      'docx': 'pi-file-word',
+      'txt': 'pi-file',
+      'odt': 'pi-file',
+      // Imágenes
+      'jpg': 'pi-image',
+      'jpeg': 'pi-image',
+      'png': 'pi-image',
+      'gif': 'pi-image',
+      'bmp': 'pi-image',
+      'webp': 'pi-image',
+      // Audio
+      'mp3': 'pi-volume-up',
+      'wav': 'pi-volume-up',
+      'ogg': 'pi-volume-up',
+      'm4a': 'pi-volume-up',
+      // Video
+      'mp4': 'pi-video',
+      'avi': 'pi-video',
+      'mov': 'pi-video',
+      'wmv': 'pi-video',
+      'mkv': 'pi-video',
+      'webm': 'pi-video'
+    };
+
+    return iconMap[extension || ''] || 'pi-file';
+  }
+
+  // Obtiene el color del badge según el tipo de archivo
+  getFileBadgeSeverity(fileName: string): 'success' | 'info' | 'warn' | 'danger' {
+    if (!fileName) return 'info';
+
+    const extension = fileName.split('.').pop()?.toLowerCase();
+
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension || '')) {
+      return 'info';
+    }
+    if (['mp3', 'wav', 'ogg', 'm4a'].includes(extension || '')) {
+      return 'success';
+    }
+    if (['mp4', 'avi', 'mov', 'wmv', 'mkv', 'webm'].includes(extension || '')) {
+      return 'warn';
+    }
+    return 'info';
+  }
+
+  // Obtiene la extensión del archivo de forma segura
+  getFileExtension(fileName: string): string {
+    if (!fileName) return 'FILE';
+    return fileName.split('.').pop()?.toUpperCase() || 'FILE';
+  }
+
+  // Verifica si el archivo es una imagen
+  isImage(fileName: string): boolean {
+    if (!fileName) return false;
+
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension || '');
+  }
+
+  // ========== FIN MÉTODOS DE ARCHIVOS ==========
 
   limpiarFormulario() {
     this.formularioForm.reset();
-    this.selectedFiles = [];
+    this.onClearFiles();
     this.filialSeleccionada = null;
     this.expediente = '';
+    this.idExpediente = 0;
+    this.correoFilial = '';
     this.escuelaOptions.set([]);
     this.areaOptions.set([]);
   }
@@ -368,24 +600,29 @@ export class FormularioComponent implements OnInit {
 
     if (this.formularioForm.invalid) {
       this.formularioForm.markAllAsTouched();
-      alert('Por favor, complete todos los campos requeridos.');
+      console.log('Por favor, complete todos los campos requeridos.');
       return;
     }
 
-    // Transformar checkboxes a array de valores numéricos
+    if (!this.idExpediente || !this.expediente) {
+      console.log('No se pudo obtener el número de expediente. Por favor, seleccione nuevamente la filial.');
+      return;
+    }
+
+    this.submitting.set(true);
+
     const otraAreaRaw = otraAreaGrp.value as Record<string, boolean>;
     const opciones: number[] = Object.entries(otraAreaRaw)
       .filter(([key, isChecked]) => isChecked && key in this.OTRA_AREA_VALUES)
       .map(([key]) => this.OTRA_AREA_VALUES[key]);
 
-    // Construir payload según la estructura del API
-    const payload = {
-      idExpediente: this.idExpediente, // Usar el ID numérico obtenido del API
+    const payload: RegistroExpedienteDU = {
+      idExpediente: this.idExpediente,
       codigoExpediente: this.expediente,
       tipoUsuario: parseInt(this.formularioForm.value.tipoUsuario),
       cPerJuridica: this.formularioForm.value.filial,
       cPerApellido: this.filialSeleccionada?.cPerApellido || '',
-      correoFilial: this.formularioForm.value.email,
+      correoFilial: this.correoFilial,
       nombres: this.formularioForm.value.nombre,
       apellidos: this.formularioForm.value.apellidos,
       dni: this.formularioForm.value.documento,
@@ -403,42 +640,58 @@ export class FormularioComponent implements OnInit {
       idDepartamento: this.formularioForm.value.area
         ? parseInt(this.formularioForm.value.area)
         : 0,
-      opciones: opciones.join(','), // Array convertido a string separado por comas
+      opciones: opciones.join(','),
       textoOtros: this.formularioForm.value.otraAreaOtro || '',
       descripcion: this.formularioForm.value.expone,
       solicita: this.formularioForm.value.solicita,
-      Archivos: this.selectedFiles.map(f => f.name) // Array de nombres de archivos
+      Archivos: this.selectedFiles.map(f => f.name)
     };
 
-    console.log('=== DATOS DEL FORMULARIO ENVIADOS ===');
-    console.log('📋 Estructura del API:');
+    console.log('\n========================================');
+    console.log('ENVIANDO FORMULARIO AL BACKEND');
+    console.log('========================================');
+    console.log('Datos del formulario:');
     console.log(JSON.stringify(payload, null, 2));
-    console.log('\n✅ Áreas seleccionadas:', opciones);
-    console.log('📝 Opciones como string:', payload.opciones);
 
-    try {
-      this.submitting.set(true);
-
-      // Aquí harías la llamada real al servicio:
-      // this.defensoriaService.enviarFormulario(payload).subscribe({
-      //   next: (response) => {
-      //     console.log('Respuesta del servidor:', response);
-      //     alert('Formulario enviado correctamente');
-      //     this.limpiarFormulario();
-      //   },
-      //   error: (error) => {
-      //     console.error('Error:', error);
-      //     alert('Ocurrió un error al enviar el formulario.');
-      //   }
-      // });
-
-      alert('Formulario enviado correctamente');
-      this.limpiarFormulario();
-    } catch (e) {
-      console.error(e);
-      alert('Ocurrió un error al enviar el formulario. Intente nuevamente.');
-    } finally {
-      this.submitting.set(false);
+    console.log('\n Archivos adjuntos:');
+    if (this.selectedFiles.length > 0) {
+      console.log(`✓ Total: ${this.selectedFiles.length} archivo(s)`);
+      console.log(`✓ Tamaño total: ${this.totalSize}`);
+      this.selectedFiles.forEach((file, index) => {
+        console.log(`  ${index + 1}. ${file.name} (${this.formatSize(file.size)})`);
+      });
+    } else {
+      console.log('Sin archivos adjuntos (opcional)');
     }
+    console.log('========================================\n');
+
+    // LLAMADA REAL AL SERVICIO
+    this.defensoriaService.post_RegistrarExpedienteDU(payload).subscribe({
+      next: (response) => {
+        this.submitting.set(false);
+        console.log('✅ RESPUESTA DEL SERVIDOR:');
+        console.log(response.body);
+
+        if (response.body?.isSuccess) {
+          console.log('✅ Formulario enviado exitosamente');
+          console.log(`📁 Archivos procesados: ${this.selectedFiles.length}`);
+          this.limpiarFormulario();
+        }
+      },
+      error: (error) => {
+        this.submitting.set(false);
+        console.error('❌ ERROR AL ENVIAR FORMULARIO:');
+        console.error(error);
+
+        let errorMessage = 'Ocurrió un error al enviar el formulario.';
+        if (error.error?.message) {
+          errorMessage = error.error.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+
+        alert(`Error: ${errorMessage}\n\nPor favor, intente nuevamente o contacte al administrador del sistema.`);
+      }
+    });
   }
 }
