@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { CardModule } from 'primeng/card';
@@ -13,9 +13,10 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { SelectFilialesComponent } from '../../../../core/shared/components/select-filiales/select-filiales.component';
 import { DefensoriaUniversitariaService } from '../../services/defensoria-universitaria.service';
 import { CampusDU } from '../../interface/campus.interface';
+import { ModalidadDU } from '../../interface/modalidad.interface';
 
 type OptionEscuela = { label: string; value: string };
-type OptionModalidad = { label: string; value: 'presencial' | 'semipresencial' | 'virtual' };
+type OptionModalidad = { label: string; value: number };
 
 @Component({
   selector: 'app-formulario',
@@ -49,11 +50,9 @@ export class FormularioComponent {
   // Opciones dinámicas para áreas/departamentos (inicia vacío)
   escuelaOptions = signal<OptionEscuela[]>([]);
 
-  modalidadOptions: OptionModalidad[] = [
-    { label: 'Presencial', value: 'presencial' },
-    { label: 'Semipresencial', value: 'semipresencial' },
-    { label: 'Virtual', value: 'virtual' }
-  ];
+  // Signal para modalidades dinámicas desde API
+  modalidadOptions = signal<OptionModalidad[]>([]);
+  modalidadesLoading = signal(false);
 
   selectedFiles: File[] = [];
   submitting = signal(false);
@@ -125,6 +124,40 @@ export class FormularioComponent {
     this.actualizarValidadoresSegunTipoUsuario();
     this.actualizarValidadoresApoderado();
     this.actualizarValidadoresOtraArea();
+  }
+
+  // Cargar modalidades al inicializar el componente
+  ngOnInit(): void {
+    this.cargarModalidades();
+  }
+
+  // Método para cargar modalidades desde la API
+  private cargarModalidades(): void {
+    this.modalidadesLoading.set(true);
+
+    this.defensoriaService.get_ModalidadesDU().subscribe({
+      next: (response) => {
+        if (response.body?.isSuccess && response.body.lstItem) {
+          const modalidades = response.body.lstItem
+            .map(mod => ({
+              label: mod.cIntDescripcion,
+              value: mod.nIntCodigo
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label, 'es', { sensitivity: 'base' }));
+
+          this.modalidadOptions.set(modalidades);
+        } else {
+          console.warn('No se encontraron modalidades');
+          this.modalidadOptions.set([]);
+        }
+        this.modalidadesLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Error cargando modalidades:', error);
+        this.modalidadOptions.set([]);
+        this.modalidadesLoading.set(false);
+      }
+    });
   }
 
   // === Validadores personalizados ===

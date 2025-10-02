@@ -221,9 +221,35 @@
               <i class="mr-2 text-blue-600 pi pi-sliders-h"></i>
               Modalidad <span class="text-red-500">*</span>
             </label>
-            <p-select formControlName="modalidad" [options]="modalidadOptions" placeholder="Seleccione la modalidad"
-              optionLabel="label" optionValue="value" appendTo="body" [style]="{ width: '100%' }" class="w-full">
+
+            <p-select
+              formControlName="modalidad"
+              [options]="modalidadOptions()"
+              placeholder="Seleccione la modalidad"
+              optionLabel="label"
+              optionValue="value"
+              appendTo="body"
+              [style]="{ width: '100%' }"
+              class="w-full"
+              [loading]="modalidadesLoading()">
             </p-select>
+
+            <!-- Mensaje cuando está cargando -->
+            <div *ngIf="modalidadesLoading()" class="p-3 mt-2 border border-blue-200 rounded-lg bg-blue-50">
+              <div class="flex items-center gap-2">
+                <i class="text-blue-600 pi pi-spin pi-spinner"></i>
+                <span class="text-sm text-blue-800">Cargando modalidades...</span>
+              </div>
+            </div>
+
+            <!-- Mensaje cuando no hay opciones disponibles -->
+            <div *ngIf="!modalidadesLoading() && modalidadOptions().length === 0" class="p-3 mt-2 border border-yellow-200 rounded-lg bg-yellow-50">
+              <div class="flex items-center gap-2">
+                <i class="text-yellow-600 pi pi-exclamation-triangle"></i>
+                <span class="text-sm text-yellow-800">No hay modalidades disponibles</span>
+              </div>
+            </div>
+
             <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('modalidad')">
               <i class="mr-1 pi pi-exclamation-circle"></i>
               Seleccione la modalidad.

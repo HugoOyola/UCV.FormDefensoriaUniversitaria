@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { CampusDU } from '../interface/campus.interface';
 import { ExpedienteDU } from '../interface/expediente.interface';
 import { DepartamentoDU } from '../interface/departamento.interface';
+import { ModalidadDU } from '../interface/modalidad.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +58,15 @@ export class DefensoriaUniversitariaService extends GlobalService {
     return this._http.post<ResponseResultLst<DepartamentoDU>>(url, body, {
       headers: this.headers_a_json,
       observe: 'response',
+    });
+  }
+
+  // Métodos para Modalidades
+  get_ModalidadesDU(): Observable<HttpResponse<ResponseResultLst<ModalidadDU>>> {
+    const url = this.ApiDefensoriaUniversitaria.url + this.ApiDefensoriaUniversitaria.endpoints.Du_ModalidadesDU;
+    return this._http.get<ResponseResultLst<ModalidadDU>>(url, {
+      headers: this.headers_a_json,
+      observe: 'response'
     });
   }
 }
