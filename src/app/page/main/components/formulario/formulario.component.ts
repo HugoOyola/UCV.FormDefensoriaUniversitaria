@@ -48,12 +48,9 @@ export class FormularioComponent {
 
   private correlativos = new Map<string, number>();
 
-  // Opciones hardcodeadas para Escuela Profesional
-  escuelaOptions = signal<OptionEscuela[]>([
-    { label: 'Ingeniería de Sistemas', value: 'sistemas' },
-    { label: 'Derecho', value: 'derecho' },
-    { label: 'Administración', value: 'administracion' }
-  ]);
+  // ✅ Opciones dinámicas desde API (reemplaza hardcoded)
+  escuelaOptions = signal<OptionEscuela[]>([]);
+  escuelasLoading = signal(false);
 
   // Opciones dinámicas para Área/Servicio (solo para administrativos)
   areaOptions = signal<OptionArea[]>([]);
@@ -135,6 +132,39 @@ export class FormularioComponent {
   // Cargar modalidades al inicializar el componente
   ngOnInit(): void {
     this.cargarModalidades();
+  }
+
+  // ✅ Método para cargar escuelas profesionales desde la API
+  private cargarEscuelasProfesionales(cperjuridica: string): void {
+    this.escuelasLoading.set(true);
+
+    // Limpiar el campo de escuela profesional cuando cambia la filial
+    this.formularioForm.patchValue({ escuelaProfesional: '' });
+
+    this.defensoriaService.post_UnidadesAcademicasDU(cperjuridica).subscribe({
+      next: (response) => {
+        if (response.body?.isSuccess && response.body.lstItem) {
+          const escuelas = response.body.lstItem
+            .filter(unidad => unidad.cuniorgnombre && unidad.cuniorgnombre.trim().length > 0)
+            .map(unidad => ({
+              label: unidad.cuniorgnombre,
+              value: unidad.nuniorgcodigo
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label, 'es', { sensitivity: 'base' }));
+
+          this.escuelaOptions.set(escuelas);
+        } else {
+          console.warn('No se encontraron unidades académicas para la filial:', cperjuridica);
+          this.escuelaOptions.set([]);
+        }
+        this.escuelasLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Error cargando unidades académicas:', error);
+        this.escuelaOptions.set([]);
+        this.escuelasLoading.set(false);
+      }
+    });
   }
 
   // Método para cargar modalidades desde la API
@@ -251,13 +281,20 @@ export class FormularioComponent {
 
   // === Helpers ===
 
-  // Método para manejar la selección de filial
+  // ✅ Método actualizado para manejar la selección de filial
   onFilialSeleccionada(filial: CampusDU | null): void {
     this.filialSeleccionada = filial;
     this.formularioForm.patchValue({ filial: filial?.cperjuridica || '' });
 
-    // Limpiar área cuando cambia la filial
-    this.formularioForm.patchValue({ area: '' });
+    // Limpiar área y escuela cuando cambia la filial
+    this.formularioForm.patchValue({
+      area: '',
+      escuelaProfesional: ''
+    });
+
+    // Limpiar opciones de escuelas y áreas
+    this.escuelaOptions.set([]);
+    this.areaOptions.set([]);
 
     if (filial?.cperjuridica && filial?.pS_ESTABID) {
       // Obtener el expediente real desde la API
@@ -277,12 +314,13 @@ export class FormularioComponent {
         }
       });
 
+      // ✅ Cargar escuelas profesionales para la filial seleccionada
+      this.cargarEscuelasProfesionales(filial.cperjuridica);
+
       // Cargar departamentos/áreas para la filial seleccionada (solo para administrativos)
       this.cargarDepartamentos(filial.pS_ESTABID);
     } else {
       this.expediente = '';
-      // Limpiar opciones cuando no hay filial seleccionada
-      this.areaOptions.set([]);
     }
   }
 
@@ -343,7 +381,8 @@ export class FormularioComponent {
     this.filialSeleccionada = null;
     this.expediente = '';
 
-    // Limpiar opciones de áreas (las escuelas están hardcodeadas)
+    // Limpiar opciones dinámicas
+    this.escuelaOptions.set([]);
     this.areaOptions.set([]);
   }
 

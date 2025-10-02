@@ -8,6 +8,7 @@ import { CampusDU } from '../interface/campus.interface';
 import { ExpedienteDU } from '../interface/expediente.interface';
 import { DepartamentoDU } from '../interface/departamento.interface';
 import { ModalidadDU } from '../interface/modalidad.interface';
+import { UnidadAcademicaDU } from '../interface/unidad-academica.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -67,6 +68,17 @@ export class DefensoriaUniversitariaService extends GlobalService {
     return this._http.get<ResponseResultLst<ModalidadDU>>(url, {
       headers: this.headers_a_json,
       observe: 'response'
+    });
+  }
+
+  // Métodos para Unidades Académicas
+  post_UnidadesAcademicasDU(cperjuridica: string): Observable<HttpResponse<ResponseResultLst<UnidadAcademicaDU>>> {
+    const url = this.ApiDefensoriaUniversitaria.url + this.ApiDefensoriaUniversitaria.endpoints.Du_UnidadesAcademicasDU;
+    const body = { cperjuridica };
+
+    return this._http.post<ResponseResultLst<UnidadAcademicaDU>>(url, body, {
+      headers: this.headers_a_json,
+      observe: 'response',
     });
   }
 }
