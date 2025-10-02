@@ -1,4 +1,4 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { CardModule } from 'primeng/card';
@@ -71,6 +71,9 @@ export class FormularioComponent implements OnInit {
   selectedFiles: UploadedFile[] = [];
   submitting = signal(false);
   filialSeleccionada: CampusDU | null = null;
+
+  // Control del componente FileUpload de PrimeNG
+  @ViewChild('fileUpload') fileUpload: any;
 
   // Límites para archivos
   readonly MAX_FILE_SIZE = 10485760; // 10 MB en bytes
@@ -470,6 +473,10 @@ export class FormularioComponent implements OnInit {
 
     console.log(`Total archivos seleccionados: ${this.selectedFiles.length}`);
     console.log('Tamaño total:', this.totalSize);
+
+    if (this.fileUpload) {
+      this.fileUpload.clear();
+    }
   }
 
   // Elimina un archivo de la lista
@@ -486,6 +493,10 @@ export class FormularioComponent implements OnInit {
     this.selectedFiles.splice(index, 1);
 
     console.log(`Archivos restantes: ${this.selectedFiles.length}`);
+
+    if (this.fileUpload) {
+      this.fileUpload.clear();
+    }
   }
 
   // Limpia todos los archivos
@@ -499,6 +510,10 @@ export class FormularioComponent implements OnInit {
     });
 
     this.selectedFiles = [];
+
+    if (this.fileUpload) {
+      this.fileUpload.clear();
+    }
   }
 
   // Formatea el tamaño del archivo a formato legible

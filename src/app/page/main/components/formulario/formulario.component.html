@@ -612,7 +612,7 @@
         <div class="space-y-4">
           <!-- Botón para seleccionar archivos -->
           <div class="flex justify-center">
-            <p-fileupload mode="basic" name="files[]"
+            <p-fileupload #fileUpload mode="basic" name="files[]"
               [chooseLabel]="canUploadMore ? 'Seleccionar Archivos (' + selectedFiles.length + '/' + MAX_FILES + ')' : 'Límite Alcanzado'"
               chooseIcon="pi pi-upload" [auto]="true" [multiple]="true" [maxFileSize]="MAX_FILE_SIZE"
               [disabled]="!canUploadMore" (onSelect)="onFileSelect($event)" [showUploadButton]="false"
