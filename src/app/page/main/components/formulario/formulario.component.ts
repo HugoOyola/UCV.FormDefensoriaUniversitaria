@@ -14,18 +14,10 @@ import { BadgeModule } from 'primeng/badge';
 import { SelectFilialesComponent } from '../../../../core/shared/components/select-filiales/select-filiales.component';
 import { DefensoriaUniversitariaService } from '../../services/defensoria-universitaria.service';
 import { CampusDU } from '../../interface/campus.interface';
-import { RegistroExpedienteDU } from '../../interface/registro-expediente.interface';
 
 type OptionEscuela = { label: string; value: string };
 type OptionModalidad = { label: string; value: number };
 type OptionArea = { label: string; value: string };
-
-interface UploadedFile {
-  name: string;
-  size: number;
-  objectURL: string;
-  file: File;
-}
 
 @Component({
   selector: 'app-formulario',
@@ -67,34 +59,22 @@ export class FormularioComponent implements OnInit {
   modalidadOptions = signal<OptionModalidad[]>([]);
   modalidadesLoading = signal(false);
 
-  // Sistema de archivos mejorado
   submitting = signal(false);
   filialSeleccionada: CampusDU | null = null;
 
-  // Control del componente FileUpload de PrimeNG
   @ViewChild('fileUpload') fileUpload: any;
 
   // Límites para archivos
   readonly MAX_FILE_SIZE = 10485760; // 10 MB en bytes
   readonly MAX_FILES = 3;
-  readonly ALLOWED_EXTENSIONS = [
-    // Documentos
-    '.pdf', '.doc', '.docx', '.txt', '.odt',
-    // Imágenes
-    '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp',
-    // Audio
-    '.mp3', '.wav', '.ogg', '.m4a',
-    // Video
-    '.mp4', '.avi', '.mov', '.wmv', '.mkv', '.webm'
-  ];
+
+  // Sistema de archivos
+  selectedFiles: Array<File & { objectURL?: string }> = [];
+  canUploadMore = true;
 
   get hasFilialSelected(): boolean {
     return this.filialSeleccionada !== null;
   }
-
-  // get canUploadMore(): boolean {
-  //   return this.selectedFiles.length < this.MAX_FILES;
-  // }
 
   get totalSize(): string {
     const total = this.selectedFiles.reduce((sum, file) => sum + file.size, 0);
@@ -389,137 +369,66 @@ export class FormularioComponent implements OnInit {
 
   // ========== MÉTODOS PARA MANEJO DE ARCHIVOS ==========
 
-  // Maneja la selección de archivos
-  selectedFiles: File[] = [];
-  canUploadMore = true;
+  /**
+   * Maneja la selección de archivos desde el componente FileUpload
+   */
+  onFileSelect(event: any): void {
+    for (const file of event.files as File[]) {
+      // Crear URL del objeto para preview de imágenes
+      const fileWithURL = Object.assign(file, {
+        objectURL: URL.createObjectURL(file)
+      });
+      this.selectedFiles.push(fileWithURL);
+    }
+    this.canUploadMore = this.selectedFiles.length < this.MAX_FILES;
+    console.log("📂 Archivos seleccionados:", this.selectedFiles);
+  }
 
-  onFileSelect (event: any): void {
-  for (const file of event.files as File[]) {
-        this.selectedFiles.push(file);
+  /**
+   * Elimina un archivo específico de la lista
+   */
+  onRemoveFile(index: number): void {
+    if (index >= 0 && index < this.selectedFiles.length) {
+      const removedFile = this.selectedFiles[index];
+
+      // Liberar la URL del objeto para evitar fugas de memoria
+      if (removedFile.objectURL) {
+        URL.revokeObjectURL(removedFile.objectURL);
       }
 
+      this.selectedFiles.splice(index, 1);
       this.canUploadMore = this.selectedFiles.length < this.MAX_FILES;
 
-      console.log("📂 Archivos seleccionados:", this.selectedFiles);
-  }
-  // onFileSelect(event: any): void {
-  //   let files: File[] = [];
-
-  //   console.log('=== ARCHIVOS SELECCIONADOS ===');
-  //   console.log('Evento recibido:', event);
-
-  //   // Priorizar currentFiles si existe (contiene los archivos acumulados)
-  //   if (event.currentFiles && Array.isArray(event.currentFiles)) {
-  //     files = event.currentFiles;
-  //   }
-  //   // Si no, intentar con event.files (puede ser FileList o Array)
-  //   else if (event.files) {
-  //     // Convertir FileList a Array si es necesario
-  //     if (event.files instanceof FileList) {
-  //       files = Array.from(event.files);
-  //     } else if (Array.isArray(event.files)) {
-  //       files = event.files;
-  //     } else {
-  //       files = [event.files];
-  //     }
-  //   }
-
-  //   console.log(`Total de archivos en el evento: ${files.length}`);
-
-  //   files.forEach((file, index) => {
-  //     // Validar que el archivo sea válido
-  //     if (!file || !file.name) {
-  //       console.warn(`Archivo ${index + 1}: Objeto de archivo inválido`, file);
-  //       return;
-  //     }
-
-  //     // Verificar si el archivo ya existe en la lista
-  //     const existeArchivo = this.selectedFiles.some(f =>
-  //       f.name === file.name && f.size === file.size
-  //     );
-
-  //     if (existeArchivo) {
-  //       console.warn(`Archivo "${file.name}" ya está en la lista`);
-  //       return;
-  //     }
-
-  //     // Validar límite de archivos
-  //     if (this.selectedFiles.length >= this.MAX_FILES) {
-  //       console.warn(`No se puede agregar más archivos. Límite: ${this.MAX_FILES}`);
-  //       return;
-  //     }
-
-  //     // Validar tamaño
-  //     if (file.size > this.MAX_FILE_SIZE) {
-  //       console.error(`Archivo "${file.name}" excede el tamaño máximo de ${this.formatSize(this.MAX_FILE_SIZE)}`);
-  //       return;
-  //     }
-
-  //     // Validar extensión
-  //     const extension = '.' + file.name.split('.').pop()?.toLowerCase();
-  //     if (!this.ALLOWED_EXTENSIONS.includes(extension)) {
-  //       console.error(`Archivo "${file.name}" tiene una extensión no permitida`);
-  //       return;
-  //     }
-
-  //     // Crear URL del objeto para preview
-  //     const objectURL = URL.createObjectURL(file);
-
-  //     const uploadedFile: UploadedFile = {
-  //       name: file.name,
-  //       size: file.size,
-  //       objectURL: objectURL,
-  //       file: file
-  //     };
-
-  //     this.selectedFiles.push(uploadedFile);
-
-  //     console.log(`✓ Archivo ${index + 1} agregado:`, {
-  //       nombre: file.name,
-  //       tamaño: this.formatSize(file.size),
-  //       tipo: file.type,
-  //       extensión: extension
-  //     });
-  //   });
-
-  //   console.log(`Total archivos seleccionados: ${this.selectedFiles.length}`);
-  //   console.log('Tamaño total:', this.totalSize);
-
-  //   if (this.fileUpload) {
-  //     this.fileUpload.clear();
-  //   }
-  // }
-
-  // Elimina un archivo de la lista
-  onRemoveFile(index: number): void {
-    const removedFile = this.selectedFiles[index];
-
-    console.log('=== ELIMINANDO ARCHIVO ===');
-    console.log(`Archivo: ${removedFile.name}`);
-    console.log(`Tamaño: ${this.formatSize(removedFile.size)}`);
-
-    this.selectedFiles.splice(index, 1);
-
-    console.log(`Archivos restantes: ${this.selectedFiles.length}`);
-
-    if (this.fileUpload) {
-      this.fileUpload.clear();
+      console.log(`🗑️ Archivo eliminado: ${removedFile.name}`);
+      console.log(`📊 Archivos restantes: ${this.selectedFiles.length}`);
     }
   }
 
-  // Limpia todos los archivos
+  /**
+   * Limpia todos los archivos adjuntos
+   */
   onClearFiles(): void {
-    console.log('=== LIMPIANDO TODOS LOS ARCHIVOS ===');
-    console.log(`Total archivos eliminados: ${this.selectedFiles.length}`);
+    // Liberar todas las URLs de objetos
+    this.selectedFiles.forEach(file => {
+      if (file.objectURL) {
+        URL.revokeObjectURL(file.objectURL);
+      }
+    });
 
     this.selectedFiles = [];
+    this.canUploadMore = true;
 
+    // Limpiar el componente FileUpload de PrimeNG si existe
     if (this.fileUpload) {
       this.fileUpload.clear();
     }
+
+    console.log("🧹 Todos los archivos han sido eliminados");
   }
 
-  // Formatea el tamaño del archivo a formato legible
+  /**
+   * Formatea el tamaño del archivo a formato legible
+   */
   formatSize(bytes: number): string {
     if (bytes === 0) return '0 B';
 
@@ -530,7 +439,9 @@ export class FormularioComponent implements OnInit {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
-  // Obtiene el ícono según el tipo de archivo
+  /**
+   * Obtiene el ícono según el tipo de archivo
+   */
   getFileIcon(fileName: string): string {
     if (!fileName) return 'pi-file';
 
@@ -567,7 +478,9 @@ export class FormularioComponent implements OnInit {
     return iconMap[extension || ''] || 'pi-file';
   }
 
-  // Obtiene el color del badge según el tipo de archivo
+  /**
+   * Obtiene el color del badge según el tipo de archivo
+   */
   getFileBadgeSeverity(fileName: string): 'success' | 'info' | 'warn' | 'danger' {
     if (!fileName) return 'info';
 
@@ -585,13 +498,17 @@ export class FormularioComponent implements OnInit {
     return 'info';
   }
 
-  // Obtiene la extensión del archivo de forma segura
+  /**
+   * Obtiene la extensión del archivo de forma segura
+   */
   getFileExtension(fileName: string): string {
     if (!fileName) return 'FILE';
     return fileName.split('.').pop()?.toUpperCase() || 'FILE';
   }
 
-  // Verifica si el archivo es una imagen
+  /**
+   * Verifica si el archivo es una imagen
+   */
   isImage(fileName: string): boolean {
     if (!fileName) return false;
 
@@ -601,29 +518,37 @@ export class FormularioComponent implements OnInit {
 
   // ========== FIN MÉTODOS DE ARCHIVOS ==========
 
-  limpiarFormulario() {
+  /**
+   * Limpia completamente el formulario y resetea todos los estados
+   */
+  limpiarFormulario(): void {
     this.formularioForm.reset();
-    // this.onClearFiles();
+    this.onClearFiles();
     this.filialSeleccionada = null;
     this.expediente = '';
     this.idExpediente = 0;
     this.correoFilial = '';
     this.escuelaOptions.set([]);
     this.areaOptions.set([]);
+
+    console.log("🔄 Formulario limpiado completamente");
   }
 
-  enviarFormulario() {
+  /**
+   * Envía el formulario con todos los datos y archivos adjuntos
+   */
+  enviarFormulario(): void {
     const otraAreaGrp = this.formularioForm.get('otraArea')!;
     otraAreaGrp.updateValueAndValidity();
 
     if (this.formularioForm.invalid) {
       this.formularioForm.markAllAsTouched();
-      console.log('Por favor, complete todos los campos requeridos.');
+      console.log('❌ Por favor, complete todos los campos requeridos.');
       return;
     }
 
     if (!this.idExpediente || !this.expediente) {
-      console.log('No se pudo obtener el número de expediente. Por favor, seleccione nuevamente la filial.');
+      console.log('❌ No se pudo obtener el número de expediente. Por favor, seleccione nuevamente la filial.');
       return;
     }
 
@@ -654,7 +579,7 @@ export class FormularioComponent implements OnInit {
     formData.append('telefono', this.formularioForm.get('telefono')?.value);
     formData.append('correo', this.formularioForm.get('email')?.value);
 
-    // Datos Academicos
+    // Datos Académicos
     formData.append('nUniOrgCodigo', this.formularioForm.get('escuelaProfesional')?.value || '0');
     formData.append('nModalidad', this.formularioForm.get('modalidad')?.value || '0');
 
@@ -673,19 +598,13 @@ export class FormularioComponent implements OnInit {
     formData.append('descripcion', this.formularioForm.get('expone')?.value);
     formData.append('solicita', this.formularioForm.get('solicita')?.value);
 
-
+    // Archivos adjuntos
     this.selectedFiles.forEach((file) => {
       formData.append("Archivos", file, file.name);
     });
 
-    // if (this.selectedFiles.length > 0) {
-    //   this.selectedFiles.forEach((uploadedFile, index) => {
-    //     formData.append('files', uploadedFile.file, uploadedFile.name);
-    //   });
-    // } else {
-    //   console.log('Sin archivos adjuntos');
-    // }
-
+    // Log para debugging
+    console.log("📤 Enviando formulario...");
     formData.forEach((value, key) => {
       if (value instanceof File) {
         console.log(`👉 ${key}: ${value.name} (${value.size} bytes)`);
@@ -693,58 +612,6 @@ export class FormularioComponent implements OnInit {
         console.log(`👉 ${key}: ${value}`);
       }
     });
-
-    console.log(formData);
-    // const payload: RegistroExpedienteDU = {
-    //   idExpediente: this.idExpediente,
-    //   codigoExpediente: this.expediente,
-    //   tipoUsuario: parseInt(this.formularioForm.value.tipoUsuario),
-    //   cPerJuridica: this.formularioForm.value.filial,
-    //   cPerApellido: this.filialSeleccionada?.cPerApellido || '',
-    //   correoFilial: this.correoFilial,
-    //   nombres: this.formularioForm.value.nombre,
-    //   apellidos: this.formularioForm.value.apellidos,
-    //   dni: this.formularioForm.value.documento,
-    //   nUniOrgCodigo: this.formularioForm.value.escuelaProfesional
-    //     ? parseInt(this.formularioForm.value.escuelaProfesional)
-    //     : 0,
-    //   nModalidad: this.formularioForm.value.modalidad || 0,
-    //   domicilio: this.formularioForm.value.domicilio,
-    //   telefono: this.formularioForm.value.telefono,
-    //   correo: this.formularioForm.value.email,
-    //   existeApo: this.formularioForm.value.isApoderado,
-    //   apellidosApo: this.formularioForm.value.apoderadoApellidos || '',
-    //   nombresApo: this.formularioForm.value.apoderadoNombres || '',
-    //   correoApo: this.formularioForm.value.apoderadoEmail || '',
-    //   idDepartamento: this.formularioForm.value.area
-    //     ? parseInt(this.formularioForm.value.area)
-    //     : 0,
-    //   opciones: opciones.join(','),
-    //   textoOtros: this.formularioForm.value.otraAreaOtro || '',
-    //   descripcion: this.formularioForm.value.expone,
-    //   solicita: this.formularioForm.value.solicita,
-    //   Archivos: this.selectedFiles.map(f => f.name)
-    // };
-
-    // console.log("Datos del formulario:", payload);
-
-    // console.log('\n========================================');
-    // console.log('ENVIANDO FORMULARIO AL BACKEND');
-    // console.log('========================================');
-    // console.log('Datos del formulario:');
-    // console.log(JSON.stringify(payload, null, 2));
-
-    // console.log('\n Archivos adjuntos:');
-    // if (this.selectedFiles.length > 0) {
-    //   console.log(`✓ Total: ${this.selectedFiles.length} archivo(s)`);
-    //   console.log(`✓ Tamaño total: ${this.totalSize}`);
-    //   this.selectedFiles.forEach((file, index) => {
-    //     console.log(`  ${index + 1}. ${file.name} (${this.formatSize(file.size)})`);
-    //   });
-    // } else {
-    //   console.log('Sin archivos adjuntos (opcional)');
-    // }
-    // console.log('========================================\n');
 
     // LLAMADA REAL AL SERVICIO
     this.defensoriaService.post_RegistrarExpedienteDU(formData).subscribe({
@@ -755,8 +622,11 @@ export class FormularioComponent implements OnInit {
 
         if (response.body?.isSuccess) {
           console.log('✅ Formulario enviado exitosamente');
-          console.log(`📁 Archivos procesados: ${this.selectedFiles.length}`);
+          console.log(`📎 Archivos procesados: ${this.selectedFiles.length}`);
+          alert('✅ Formulario enviado exitosamente');
           this.limpiarFormulario();
+        } else {
+          alert('⚠️ El formulario se envió pero hubo un problema. Revise la consola para más detalles.');
         }
       },
       error: (error) => {
