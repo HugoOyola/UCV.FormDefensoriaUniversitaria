@@ -11,6 +11,8 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import { BadgeModule } from 'primeng/badge';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 import { SelectFilialesComponent } from '../../../../core/shared/components/select-filiales/select-filiales.component';
 import { DefensoriaUniversitariaService } from '../../services/defensoria-universitaria.service';
 import { CampusDU } from '../../interface/campus.interface';
@@ -35,8 +37,10 @@ type OptionArea = { label: string; value: string };
     RadioButtonModule,
     CheckboxModule,
     BadgeModule,
+    ToastModule,
     SelectFilialesComponent
   ],
+  providers: [MessageService],
   templateUrl: './formulario.component.html',
   styleUrls: ['./formulario.component.scss']
 })
@@ -66,7 +70,7 @@ export class FormularioComponent implements OnInit {
 
   // Límites para archivos
   readonly MAX_FILE_SIZE = 10485760; // 10 MB en bytes
-  readonly MAX_FILES = 3;
+  readonly MAX_FILES = 4;
 
   // Sistema de archivos
   selectedFiles: Array<File & { objectURL?: string }> = [];
@@ -94,7 +98,8 @@ export class FormularioComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private defensoriaService: DefensoriaUniversitariaService
+    private defensoriaService: DefensoriaUniversitariaService,
+    private messageService: MessageService
   ) {
     this.formularioForm = this.fb.group({
       filial: ['', Validators.required],
@@ -369,9 +374,7 @@ export class FormularioComponent implements OnInit {
 
   // ========== MÉTODOS PARA MANEJO DE ARCHIVOS ==========
 
-  /**
-   * Maneja la selección de archivos desde el componente FileUpload
-   */
+  // Maneja la selección de archivos desde el componente FileUpload
   onFileSelect(event: any): void {
     for (const file of event.files as File[]) {
       // Crear URL del objeto para preview de imágenes
@@ -384,9 +387,7 @@ export class FormularioComponent implements OnInit {
     console.log("📂 Archivos seleccionados:", this.selectedFiles);
   }
 
-  /**
-   * Elimina un archivo específico de la lista
-   */
+  // Elimina un archivo específico de la lista
   onRemoveFile(index: number): void {
     if (index >= 0 && index < this.selectedFiles.length) {
       const removedFile = this.selectedFiles[index];
@@ -404,9 +405,7 @@ export class FormularioComponent implements OnInit {
     }
   }
 
-  /**
-   * Limpia todos los archivos adjuntos
-   */
+  // Limpia todos los archivos adjuntos
   onClearFiles(): void {
     // Liberar todas las URLs de objetos
     this.selectedFiles.forEach(file => {
@@ -426,9 +425,7 @@ export class FormularioComponent implements OnInit {
     console.log("🧹 Todos los archivos han sido eliminados");
   }
 
-  /**
-   * Formatea el tamaño del archivo a formato legible
-   */
+  // Formatea el tamaño del archivo a formato legible
   formatSize(bytes: number): string {
     if (bytes === 0) return '0 B';
 
@@ -439,9 +436,7 @@ export class FormularioComponent implements OnInit {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 
-  /**
-   * Obtiene el ícono según el tipo de archivo
-   */
+  // Obtiene el ícono según el tipo de archivo
   getFileIcon(fileName: string): string {
     if (!fileName) return 'pi-file';
 
@@ -478,9 +473,7 @@ export class FormularioComponent implements OnInit {
     return iconMap[extension || ''] || 'pi-file';
   }
 
-  /**
-   * Obtiene el color del badge según el tipo de archivo
-   */
+  // Obtiene el color del badge según el tipo de archivo
   getFileBadgeSeverity(fileName: string): 'success' | 'info' | 'warn' | 'danger' {
     if (!fileName) return 'info';
 
@@ -498,29 +491,15 @@ export class FormularioComponent implements OnInit {
     return 'info';
   }
 
-  /**
-   * Obtiene la extensión del archivo de forma segura
-   */
+  // Obtiene la extensión del archivo de forma segura
   getFileExtension(fileName: string): string {
     if (!fileName) return 'FILE';
     return fileName.split('.').pop()?.toUpperCase() || 'FILE';
   }
 
-  /**
-   * Verifica si el archivo es una imagen
-   */
-  isImage(fileName: string): boolean {
-    if (!fileName) return false;
-
-    const extension = fileName.split('.').pop()?.toLowerCase();
-    return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension || '');
-  }
-
   // ========== FIN MÉTODOS DE ARCHIVOS ==========
 
-  /**
-   * Limpia completamente el formulario y resetea todos los estados
-   */
+  // Limpia completamente el formulario y resetea todos los estados
   limpiarFormulario(): void {
     this.formularioForm.reset();
     this.onClearFiles();
@@ -534,21 +513,25 @@ export class FormularioComponent implements OnInit {
     console.log("🔄 Formulario limpiado completamente");
   }
 
-  /**
-   * Envía el formulario con todos los datos y archivos adjuntos
-   */
+  // Envía el formulario con todos los datos y archivos adjuntos
   enviarFormulario(): void {
     const otraAreaGrp = this.formularioForm.get('otraArea')!;
     otraAreaGrp.updateValueAndValidity();
 
     if (this.formularioForm.invalid) {
       this.formularioForm.markAllAsTouched();
-      console.log('❌ Por favor, complete todos los campos requeridos.');
+
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formulario incompleto',
+        detail: 'Por favor, complete todos los campos requeridos correctamente',
+        life: 5000
+      });
       return;
     }
 
     if (!this.idExpediente || !this.expediente) {
-      console.log('❌ No se pudo obtener el número de expediente. Por favor, seleccione nuevamente la filial.');
+      console.log('No se pudo obtener el número de expediente. Por favor, seleccione nuevamente la filial.');
       return;
     }
 
@@ -621,27 +604,32 @@ export class FormularioComponent implements OnInit {
         console.log(response.body);
 
         if (response.body?.isSuccess) {
-          console.log('✅ Formulario enviado exitosamente');
-          console.log(`📎 Archivos procesados: ${this.selectedFiles.length}`);
-          alert('✅ Formulario enviado exitosamente');
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Formulario enviado',
+            detail: `Su denuncia/reclamo ha sido registrado con el expediente N° ${this.expediente}`,
+            life: 6000
+          });
+
           this.limpiarFormulario();
         } else {
-          alert('⚠️ El formulario se envió pero hubo un problema. Revise la consola para más detalles.');
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Advertencia',
+            detail: 'El formulario se envió pero hubo un problema en el procesamiento',
+            life: 5000
+          });
         }
       },
       error: (error) => {
         this.submitting.set(false);
-        console.error('❌ ERROR AL ENVIAR FORMULARIO:');
-        console.error(error);
-
-        let errorMessage = 'Ocurrió un error al enviar el formulario.';
-        if (error.error?.message) {
-          errorMessage = error.error.message;
-        } else if (error.message) {
-          errorMessage = error.message;
-        }
-
-        alert(`Error: ${errorMessage}\n\nPor favor, intente nuevamente o contacte al administrador del sistema.`);
+        console.error('❌ ERROR AL ENVIAR FORMULARIO:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error al enviar formulario',
+          detail: `Error: ${error.error?.message || error.message}`,
+          life: 6000
+        });
       }
     });
   }
