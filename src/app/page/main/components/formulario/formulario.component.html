@@ -1,6 +1,57 @@
 <!-- Toast Component -->
 <p-toast position="top-right"></p-toast>
 
+<!-- Modal de Carga en Pantalla Completa -->
+<p-dialog [(visible)]="showLoadingModal" [modal]="true" [closable]="false" [closeOnEscape]="false"
+  [style]="{ width: '100vw', height: '100vh', maxWidth: '100vw' }" [contentStyle]="{
+    padding: '0',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }" styleClass="loading-modal-fullscreen">
+
+  <div class="flex flex-col items-center justify-center gap-8 text-center">
+    <!-- Spinner de Carga -->
+    <p-progressSpinner [style]="{ width: '120px', height: '120px' }" strokeWidth="4" fill="transparent"
+      animationDuration="1.5s">
+    </p-progressSpinner>
+
+    <!-- Texto de Carga -->
+    <div class="space-y-4">
+      <h2 class="text-3xl font-bold text-white">
+        <i class="mr-3 pi pi-spin pi-spinner"></i>
+        Cargando Denuncia / Reclamo
+      </h2>
+
+      <div *ngIf="selectedFiles.length > 0" class="space-y-2">
+        <p class="text-xl text-gray-300">
+          <i class="mr-2 pi pi-cloud-upload"></i>
+          Subiendo archivos adjuntos
+        </p>
+        <p class="text-lg text-gray-400">
+          {{ selectedFiles.length }} archivo(s) - {{ totalSize }}
+        </p>
+      </div>
+
+      <p class="text-2xl text-blue-300 animate-pulse">
+        Espere unos segundos...
+      </p>
+
+      <div class="flex items-center justify-center gap-2 mt-6 text-gray-400">
+        <i class="pi pi-shield"></i>
+        <span class="text-sm">Procesando su información de forma segura</span>
+      </div>
+    </div>
+
+    <!-- Indicador Visual Adicional -->
+    <div class="flex gap-3">
+      <div class="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0s"></div>
+      <div class="w-3 h-3 bg-blue-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+      <div class="w-3 h-3 bg-blue-300 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+    </div>
+  </div>
+</p-dialog>
+
 <!-- Header (fuera del form) -->
 <header class="p-6 text-white bg-slate-700">
   <div class="flex items-center justify-between">
@@ -492,11 +543,11 @@
           </div>
         </div>
 
-        <p class="mt-3 text-sm text-red-500"
+        <!-- <p class="mt-3 text-sm text-red-500"
           *ngIf="formularioForm.get('otraArea')?.errors?.['ningunaSeleccionada'] && (formularioForm.get('otraArea')?.touched || formularioForm.get('otraArea')?.dirty)">
           <i class="mr-1 pi pi-exclamation-circle"></i>
           Debe seleccionar al menos una opción.
-        </p>
+        </p> -->
       </div>
     </div>
 

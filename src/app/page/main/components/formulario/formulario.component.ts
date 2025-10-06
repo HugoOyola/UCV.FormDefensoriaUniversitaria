@@ -12,6 +12,8 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import { BadgeModule } from 'primeng/badge';
 import { ToastModule } from 'primeng/toast';
+import { DialogModule } from 'primeng/dialog';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageService } from 'primeng/api';
 import { SelectFilialesComponent } from '../../../../core/shared/components/select-filiales/select-filiales.component';
 import { DefensoriaUniversitariaService } from '../../services/defensoria-universitaria.service';
@@ -38,7 +40,9 @@ type OptionArea = { label: string; value: string };
     CheckboxModule,
     BadgeModule,
     ToastModule,
-    SelectFilialesComponent
+    SelectFilialesComponent,
+    DialogModule,
+    ProgressSpinnerModule
   ],
   providers: [MessageService],
   templateUrl: './formulario.component.html',
@@ -64,12 +68,13 @@ export class FormularioComponent implements OnInit {
   modalidadesLoading = signal(false);
 
   submitting = signal(false);
+  showLoadingModal = signal(false);
   filialSeleccionada: CampusDU | null = null;
 
   @ViewChild('fileUpload') fileUpload: any;
 
   // Límites para archivos
-  readonly MAX_FILE_SIZE = 10485760; // 10 MB en bytes
+  readonly MAX_FILE_SIZE = 52428800; // 50 MB en bytes
   readonly MAX_FILES = 4;
 
   // Sistema de archivos
@@ -497,6 +502,13 @@ export class FormularioComponent implements OnInit {
     return fileName.split('.').pop()?.toUpperCase() || 'FILE';
   }
 
+  // Redirige al usuario a la página principal de la UCV después de un retraso
+  private redirigirWebUCV(delayMs: number = 15000): void {
+    setTimeout(() => {
+      window.location.href = 'https://www.ucv.edu.pe/';
+    }, delayMs);
+  }
+
   // ========== FIN MÉTODOS DE ARCHIVOS ==========
 
   // Limpia completamente el formulario y resetea todos los estados
@@ -535,6 +547,8 @@ export class FormularioComponent implements OnInit {
       return;
     }
 
+    // Mostrar modal de carga
+    this.showLoadingModal.set(true);
     this.submitting.set(true);
 
     const otraAreaRaw = otraAreaGrp.value as Record<string, boolean>;
@@ -599,6 +613,7 @@ export class FormularioComponent implements OnInit {
     // LLAMADA REAL AL SERVICIO
     this.defensoriaService.post_RegistrarExpedienteDU(formData).subscribe({
       next: (response) => {
+        this.showLoadingModal.set(false);
         this.submitting.set(false);
         console.log('✅ RESPUESTA DEL SERVIDOR:');
         console.log(response.body);
@@ -608,10 +623,11 @@ export class FormularioComponent implements OnInit {
             severity: 'success',
             summary: 'Formulario enviado',
             detail: `Su denuncia/reclamo ha sido registrado con el expediente N° ${this.expediente}`,
-            life: 6000
+            life: 5000 // Mostrar por 5 segundos
           });
 
           this.limpiarFormulario();
+          this.redirigirWebUCV(5000); // Redirigir después de 5 segundos
         } else {
           this.messageService.add({
             severity: 'warn',
