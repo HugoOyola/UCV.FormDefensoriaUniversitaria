@@ -624,11 +624,11 @@ export class FormularioComponent implements OnInit {
             severity: 'success',
             summary: 'Formulario enviado',
             detail: `Su denuncia/reclamo ha sido registrado con el expediente N° ${this.expediente}`,
-            life: 5000 // Mostrar por 5 segundos
+            life: 3000 // Mostrar por 5 segundos
           });
 
           this.limpiarFormulario();
-          this.redirigirWebUCV(5000); // Redirigir después de 5 segundos
+          this.redirigirWebUCV(3000); // Redirigir después de 5 segundos
         } else {
           this.messageService.add({
             severity: 'warn',
