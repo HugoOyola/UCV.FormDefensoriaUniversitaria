@@ -131,10 +131,10 @@ export class FormularioComponent implements OnInit {
         direccion: [false],
         secretaria: [false],
         cap: [false],
-        otro: [false]
+        otro: [false],
+        otraAreaOtro: [''] // Mover aquí
       }),
       // }, { validators: [this.alMenosUnaSeleccion()] }),
-      otraAreaOtro: ['']
     });
 
     this.setupFormSubscriptions();
@@ -153,7 +153,7 @@ export class FormularioComponent implements OnInit {
       this.actualizarValidadoresApoderado();
     });
 
-    this.formularioForm.get('otraArea')?.valueChanges.subscribe(() => {
+    this.formularioForm.get('otraArea.otro')?.valueChanges.subscribe(() => {
       this.actualizarValidadoresOtraArea();
     });
 
@@ -308,7 +308,7 @@ export class FormularioComponent implements OnInit {
   private actualizarValidadoresOtraArea() {
     const grupo = this.formularioForm.get('otraArea')!;
     const otroChecked = (grupo.value as any)?.otro;
-    const otroCtrl = this.formularioForm.get('otraAreaOtro')!;
+    const otroCtrl = this.formularioForm.get('otraArea.otraAreaOtro')!;
 
     if (otroChecked) {
       otroCtrl.setValidators([Validators.required, Validators.minLength(3)]);
@@ -592,7 +592,7 @@ export class FormularioComponent implements OnInit {
 
     // Datos de la Denuncia/Reclamo
     formData.append('opciones', opciones.join(','));
-    formData.append('textoOtros', this.formularioForm.get('otraAreaOtro')?.value || '');
+    formData.append('textoOtros', this.formularioForm.get('otraArea.otraAreaOtro')?.value || '');
     formData.append('descripcion', this.formularioForm.get('expone')?.value);
     formData.append('solicita', this.formularioForm.get('solicita')?.value);
 

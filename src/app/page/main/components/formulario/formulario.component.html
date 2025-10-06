@@ -536,7 +536,7 @@
 
             <div class="mt-2" *ngIf="formularioForm.get('otraArea.otro')?.value">
               <input pInputText formControlName="otraAreaOtro" placeholder="Especifique el área" class="w-full" />
-              <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('otraAreaOtro')">
+              <p class="mt-1 text-sm text-red-500" *ngIf="isInvalid('otraArea.otraAreaOtro')">
                 <i class="mr-1 pi pi-exclamation-circle"></i> Este campo es obligatorio cuando selecciona "Otro".
               </p>
             </div>
