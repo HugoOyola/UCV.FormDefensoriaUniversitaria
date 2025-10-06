@@ -132,7 +132,8 @@ export class FormularioComponent implements OnInit {
         secretaria: [false],
         cap: [false],
         otro: [false]
-      }, { validators: [this.alMenosUnaSeleccion()] }),
+      }),
+      // }, { validators: [this.alMenosUnaSeleccion()] }),
       otraAreaOtro: ['']
     });
 
@@ -241,13 +242,13 @@ export class FormularioComponent implements OnInit {
     });
   }
 
-  private alMenosUnaSeleccion() {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const value = control.value as Record<string, boolean>;
-      const alguno = Object.values(value || {}).some(Boolean);
-      return alguno ? null : { ningunaSeleccionada: true };
-    };
-  }
+  // private alMenosUnaSeleccion() {
+  //   return (control: AbstractControl): ValidationErrors | null => {
+  //     const value = control.value as Record<string, boolean>;
+  //     const alguno = Object.values(value || {}).some(Boolean);
+  //     return alguno ? null : { ningunaSeleccionada: true };
+  //   };
+  // }
 
   private actualizarValidadoresSegunTipoUsuario() {
     const tipo = this.formularioForm.get('tipoUsuario')?.value;
