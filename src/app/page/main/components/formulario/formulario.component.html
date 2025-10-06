@@ -12,13 +12,13 @@
 
   <div class="flex flex-col items-center justify-center gap-8 text-center">
     <!-- Spinner de Carga -->
-    <p-progressSpinner [style]="{ width: '120px', height: '120px' }" strokeWidth="4" fill="transparent"
+    <p-progressSpinner [style]="{ width: '80px', height: '80px' }" strokeWidth="4" fill="transparent"
       animationDuration="1.5s">
     </p-progressSpinner>
 
     <!-- Texto de Carga -->
     <div class="space-y-4">
-      <h2 class="text-3xl font-bold text-white">
+      <h2 class="text-2xl font-bold text-white">
         <i class="mr-3 pi pi-spin pi-spinner"></i>
         Cargando Denuncia / Reclamo
       </h2>
@@ -28,7 +28,7 @@
           <i class="mr-2 pi pi-cloud-upload"></i>
           Subiendo archivos adjuntos
         </p>
-        <p class="text-lg text-gray-400">
+        <p class="text-sm text-gray-400">
           {{ selectedFiles.length }} archivo(s) - {{ totalSize }}
         </p>
       </div>
